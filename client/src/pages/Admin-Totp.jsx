@@ -11,26 +11,34 @@ export const AdminTotp = () => {
   // Function to fetch TOTP from API
   const getTotp = async () => {
     try {
+      console.log("Fetching TOTP...");
       const response = await fetch("http://localhost:5000/api/admin/totp", {
         method: "GET",
         headers: {
           Authorization: authorizationToken,
         },
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       setTotp(data.currentNumber);
+      // console.log("TOTP fetched:", data.currentNumber);
     } catch (error) {
       setError(error.message);
+      // console.error("Error fetching TOTP:", error);
     }
   };
 
-  // Effect to fetch TOTP every 5 seconds
+  // Effect to fetch TOTP initially and then every 30 seconds
   useEffect(() => {
+    getTotp(); // Fetch initially
+
     const intervalId = setInterval(() => {
       getTotp().catch((error) => {
         setError(error.message);
       });
-    }, 10); // Fetch TOTP every 0.0100 seconds
+    }, 30000); // Fetch every 30 seconds
 
     return () => clearInterval(intervalId); // Clear interval on component unmount
   }, [authorizationToken]);
@@ -61,10 +69,9 @@ export const AdminTotp = () => {
     border: "1px solid #000",
     margin: "0 5px",
     fontSize: "30px",
-    color:"white",
-    background:"black",
+    color: "white",
+    background: "black",
     fontWeight: "bold",
-
   };
 
   const extraMarginRight = {
@@ -97,7 +104,7 @@ export const AdminTotp = () => {
         <h3 className="text-center mt-3">Loading...</h3>
       )}
       <h3 className="text-center mt-3">Next update in: {timer} seconds</h3>
-      {/* {error && <p className="text-center text-danger">{error}</p>} */}
+      {error && <p className="text-center text-danger">{error}</p>}
     </>
   );
 };

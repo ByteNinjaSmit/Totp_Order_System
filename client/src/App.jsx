@@ -16,6 +16,7 @@ import { AdminUsers } from "./pages/Admin-Users";
 import { AdminContacts } from "./pages/Admin-Contacts";
 import { AdminUpdate } from "./pages/Admin-Update";
 import { AdminTotp } from "./pages/Admin-Totp";
+import { TotpVerify } from "./pages/Totp-Verify";
 
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/register" element={<Register />} />
             <Route exact path="/service" element={<Service />} />
+            <Route exact path="/service/totp" element={<TotpVerify />} />
             <Route exact path="/contact" element={<Contact />} />
             <Route exact path="/logout" element={<Logout />} />
             <Route path="*" element={<Error />} />
