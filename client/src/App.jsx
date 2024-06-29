@@ -17,6 +17,7 @@ import { AdminContacts } from "./pages/Admin-Contacts";
 import { AdminUpdate } from "./pages/Admin-Update";
 import AdminTotp from "./pages/Admin-Totp"; // Note the use of default import
 import { TotpVerify } from "./pages/Totp-Verify";
+import { AdminOrders } from "./pages/Admin-Orders";
 
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
               <Route path="contacts" element={<AdminContacts />} />
               <Route path="users/:id/edit" element={<AdminUpdate />} />
               <Route path="totp/:id" element={<AdminTotp />} />
+              <Route path="orders" element={<AdminOrders />} />
             </Route>
           </Routes>
           <Footer />

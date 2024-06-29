@@ -3,6 +3,7 @@ import { FaUser, FaHome, FaRegListAlt } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { useAuth } from "../../store/auth";
 import { IoMdTimer } from "react-icons/io";
+import { BsCartCheck } from "react-icons/bs";
 
 export const AdminLayout = () => {
     const { user, isLoading } = useAuth();
@@ -25,6 +26,8 @@ export const AdminLayout = () => {
                                 <li><NavLink to="/admin"><FaHome /> Home</NavLink></li>
                                 <li><NavLink to="/admin/users"><FaUser /> users</NavLink></li>
                                 <li><NavLink to="/admin/services"><FaRegListAlt /> services</NavLink></li>
+                                {/* For Orders */}
+                                <li><NavLink to="/admin/orders"><BsCartCheck /> Orders</NavLink></li>
                                 <li><NavLink to="/admin/contacts"><FaMessage /> Contacts</NavLink></li>
                                 <li><NavLink to={`/admin/totp/${user._id}`}>
                                     <IoMdTimer />Totp

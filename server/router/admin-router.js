@@ -15,4 +15,8 @@ router.route("/users/update/:id").patch(authMiddleware, adminMiddleware, adminCo
 router.route("/totp").get(authMiddleware, adminMiddleware, adminController.getTotp);
 router.route("/totp/data").post(authMiddleware, adminController.order);
 
+// GET Order 
+router.route('/orders').get(authMiddleware, adminMiddleware, adminController.getAllOrders);
+router.route('/orders/update/:id').patch(authMiddleware, adminMiddleware, adminController.updateOrderById);
+
 module.exports = router;

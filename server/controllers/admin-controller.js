@@ -1,6 +1,7 @@
 const User = require('../models/user-model');
 const Contact = require('../models/contact-model');
 const { Server } = require('socket.io');
+const Order = require('../models/order-model');
 
 // -------------------
 // Generating a ranodm Number
@@ -143,4 +144,49 @@ const order = async (req, res) => {
 };
 
 
-module.exports = { getAllUsers, getAllContacts, deleteUserById, getUsersById, updateUserById, deleteContactById, order, getTotp, generateRandomNumber, getCurrentNumber, startTotpInterval };
+// -----------------------
+// Get all Orders Data From Database Dynamically Logic
+// -----------------------
+
+const getAllOrders = async(req,res,next)=>{
+    try {
+        const orders = await Order.find();
+        if(!orders || orders.length ===0){
+            return res.status(404).json({message:"No Orders Found"})
+        }
+        else{
+            return res.status(200).json(orders)
+        }
+    } catch (error) {
+        next(error)
+    }
+};
+
+// -----------------------
+// Update Order By Id from Database Dynamically Logic
+// -----------------------
+const updateOrderById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const { complete } = req.body;
+        console.log(complete);
+
+        const updateData = await Order.findOneAndUpdate(
+            { _id: id },
+            { $set: { complete } },
+            { new: true } // This option returns the updated document
+        );
+        if (!updateData) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        return res.status(200).json(updateData);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+
+module.exports = { getAllUsers, getAllContacts, deleteUserById, getUsersById, updateUserById, deleteContactById, order, getTotp, generateRandomNumber, getCurrentNumber, startTotpInterval,getAllOrders,updateOrderById };

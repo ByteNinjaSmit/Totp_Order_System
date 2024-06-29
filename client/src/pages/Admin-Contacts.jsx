@@ -43,8 +43,10 @@ export const AdminContacts = () => {
         }
     };
     useEffect(() => {
-        getContactsData();
-    })
+        getContactsData().catch((error) => {
+            setError(error.message);
+        });
+    }, [authorizationToken]);
     return (
         <>
             <h1 className="w-100 text-center mt-3">Admin Contacts Panel</h1>
