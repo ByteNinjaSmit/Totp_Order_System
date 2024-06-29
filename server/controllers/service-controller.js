@@ -1,4 +1,5 @@
 const Service = require("../models/service-model");
+const User = require('../models/user-model');
 
 const services =  async (req,res) => {
     try{
@@ -16,4 +17,16 @@ const services =  async (req,res) => {
 
 };
 
-module.exports = services;
+const OrderData = async (req,res,next) =>{
+    try {
+        const serviceId = req.params.id;
+        const data = await Service.findOne({_id:serviceId});
+        console.log(data);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(`Order Data error : ${error}`);   
+        next(error);
+    }
+};
+
+module.exports = {services,OrderData};

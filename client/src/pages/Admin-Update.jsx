@@ -45,6 +45,7 @@ export const AdminUpdate = () => {
             [name]: value,
         })
     };
+    
     // ----------------
     // To Update Data Dynamically Logic
     // ------------------------

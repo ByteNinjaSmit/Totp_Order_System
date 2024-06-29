@@ -1,22 +1,36 @@
 const User = require('../models/user-model');
 const Contact = require('../models/contact-model');
+const { Server } = require('socket.io');
 
-//  TOTP
+// -------------------
+// Generating a ranodm Number
+// =----------------------------
+
 let currentNumber;
 
 // Function to generate a 6-digit random number
 function generateRandomNumber() {
     currentNumber = Math.floor(100000 + Math.random() * 900000);
 }
+function getCurrentNumber() {
+    return currentNumber;
+}
 
-// Generate the initial random number
-generateRandomNumber();
+// Function to start TOTP generation and emit updates
+function startTotpInterval(io) {
+    generateRandomNumber();
+    io.emit('newNumber', getCurrentNumber());
 
-// Update the random number every 30 seconds
-setInterval(generateRandomNumber, 30000);
+    setInterval(() => {
+        generateRandomNumber();
+        io.emit('newNumber', getCurrentNumber());
+    }, 30000); // Emit every 30 seconds
 
-
-
+    // Broadcast new numbers every second
+    setInterval(() => {
+        io.emit('newNumber', getCurrentNumber());
+    }, 1000); // Broadcast every 1 second
+}
 
 const getAllUsers = async (req, res, next) => {
     try {
@@ -30,73 +44,49 @@ const getAllUsers = async (req, res, next) => {
         next(error);
     }
 };
-// Single User Data get Logic
 
-const getUsersById = async (req,res, next)=>{
+const getUsersById = async (req, res, next) => {
     try {
-       const id =req.params.id;
-       const data = await User.findOne({_id:id},{password:0});
-       return res.status(200).json(data);
+        const id = req.params.id;
+        const data = await User.findOne({ _id: id }, { password: 0 });
+        return res.status(200).json(data);
     } catch (error) {
-       next(error);
+        next(error);
     }
-}
+};
 
-// Update User Data Logic
-
-const updateUserById =async(req,res, next)=>{
+const updateUserById = async (req, res, next) => {
     try {
         const id = req.params.id;
         const updateUserData = req.body;
-        const updatedData = await User.updateOne({_id:id},{
+        const updatedData = await User.updateOne({ _id: id }, {
             $set: updateUserData,
         });
         return res.status(200).json(updatedData);
     } catch (error) {
         next(error);
     }
-}
+};
 
-// Delete User Login
-
-const deleteUserById = async (req,res, next)=>{
-     try {
-        const id =req.params.id;
-        await User.deleteOne({_id:id});
-        return res.status(200).json({message:"user Deleted Successfully"});
-     } catch (error) {
-        next(error);
-     }
-}
-
-
-// delete Contact Logic
-
-const deleteContactById = async (req,res, next)=>{
+const deleteUserById = async (req, res, next) => {
     try {
-       const id =req.params.id;
-       await Contact.deleteOne({_id:id});
-       res.status(200).json({message:"Contact Deleted Successfully"});
+        const id = req.params.id;
+        await User.deleteOne({ _id: id });
+        return res.status(200).json({ message: "user Deleted Successfully" });
     } catch (error) {
-       next(error);
+        next(error);
     }
 };
 
-const getAllContacts = async (req,res, next)=>{
+const deleteContactById = async (req, res, next) => {
     try {
-        const contacts= await Contact.find();
-        if(!contacts || contacts.length === 0){
-            res.status(404).json({message:"No Contacts Found"});
-        }
-        res.status(200).json(contacts);
-
+        const id = req.params.id;
+        await Contact.deleteOne({ _id: id });
+        res.status(200).json({ message: "Contact Deleted Successfully" });
     } catch (error) {
         next(error);
     }
-}
-
-
-// Genrate TOTP Logic
+};
 
 const getTotp = async (req, res, next) => {
     try {
@@ -106,6 +96,41 @@ const getTotp = async (req, res, next) => {
     }
 };
 
+const getAllContacts = async (req, res, next) => {
+    try {
+        const contacts = await Contact.find();
+        if (!contacts || contacts.length === 0) {
+            res.status(404).json({ message: "No Contacts Found" });
+        }
+        res.status(200).json(contacts);
+    } catch (error) {
+        next(error);
+    }
+};
 
+const order = async (req, res) => {
+    try {
+        const { totp, username, phone, service, provider, price } = req.body;
+        const TOTP = totp;
+        const authorizationToken = req.token;
+        console.log("TOTP:", TOTP);
+        console.log("Username:", username);
+        console.log("Phone:", phone);
+        console.log("Service:", service);
+        console.log("Provider:", provider);
+        console.log("Price:", price);
 
-module.exports={getAllUsers,getAllContacts,deleteUserById,getUsersById,updateUserById,deleteContactById,getTotp};
+        if (currentNumber === TOTP) {
+            console.log("It is Correct Data Totp working");
+            console.log("its Same");
+        } else {
+            console.log("is Not Same");
+            console.log(`Current Number is ${currentNumber}  and TOTP is: ${TOTP}`);
+        }
+    } catch (error) {
+        console.error("Error placing order:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+module.exports = { getAllUsers, getAllContacts, deleteUserById, getUsersById, updateUserById, deleteContactById, order, getTotp, generateRandomNumber, getCurrentNumber, startTotpInterval };

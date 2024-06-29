@@ -1,14 +1,96 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from "./../store/auth";
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 
 export const TotpVerify = () => {
   const [totpCode, setTotpCode] = useState(['', '', '', '', '', '']);
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const params = useParams();
   const inputs = useRef([]);
+  const { user, authorizationToken } = useAuth();
+  const [orderData, setOrderData] = useState({
+    totp: "",
+    username: "",
+    phone: "",
+    service: "",
+    provider: "",
+    price: "",
+  });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(`TOTP code submitted: ${totpCode.join('')}`);
+  // ----------------
+  // To Get Single Service Data Dynamically Logic
+  // ------------------------
+
+  const getSingleServiceData = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/data/service/order/data/${params.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: authorizationToken,
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch service data');
+      }
+      const data = await response.json();
+      setOrderData({
+        username: user.username,
+        phone: user.phone,
+        service: data.Service,
+        provider: data.Provider,
+        price: data.Price,
+      });
+    } catch (error) {
+      console.log(`Single Service Data Error: ${error}`);
+    }
   };
+
+
+  useEffect(() => {
+    getSingleServiceData();
+  }, [params.id]);
+
+  // ----------------
+  // To POST Order Data Perfectly Logic
+  // ------------------------
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const fullTotpCode = totpCode.join('');
+
+    const updatedOrderData = {
+      ...orderData,
+      totp: fullTotpCode,
+    };
+
+    setOrderData(updatedOrderData);
+
+    // Delay the POST request by 1.5 seconds
+    setTimeout(async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/admin/totp/data", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authorizationToken,
+          },
+          body: JSON.stringify(updatedOrderData),
+        });
+        if (response.ok) {
+          toast.success("Order Successful");
+          navigate("/");
+        } else {
+          toast.error("Order Failed, Enter Correct TOTP");
+        }
+      } catch (error) {
+        console.log(`Error from TOTP post: ${error}`);
+      }
+    }, 1500);
+  };
+
 
   const handleInputChange = (index) => (event) => {
     const { value } = event.target;
@@ -20,6 +102,7 @@ export const TotpVerify = () => {
         inputs.current[index + 1].focus();
       }
     }
+
   };
 
   const handleKeyPress = (event) => {

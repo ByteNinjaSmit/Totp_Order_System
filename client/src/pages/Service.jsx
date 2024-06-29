@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../store/auth";
+import {Link} from "react-router-dom";
 
 export const Service = () => {
   const { services } = useAuth();
@@ -17,7 +18,7 @@ export const Service = () => {
         <h1 className="main-heading mt-4">Services</h1>
         <div className="row">
           {services.map((curElem, index) => {
-            const { Price, Description, Provider, Service } = curElem;
+            const { Price, Description, Provider, Service,_id } = curElem;
             return (
               <div
                 className="col-md-4 mt-3 mb-3"
@@ -52,7 +53,10 @@ export const Service = () => {
                       <p className="card-text">{Provider}</p>
                       <p className="card-text">{Price}</p>
                     </div>
-                  </div>
+                    <hr>
+                    </hr>
+                    <button className="btn"><Link className="btn btn-primary" to={`/service/${_id}/totp`}>Order Now</Link> </button>
+                    </div>
                 </div>
               </div>
             );
