@@ -1,6 +1,5 @@
 const User = require('../models/user-model');
 const Contact = require('../models/contact-model');
-const { Server } = require('socket.io');
 const Order = require('../models/order-model');
 
 // -------------------
@@ -118,7 +117,7 @@ const order = async (req, res) => {
         if (Number(currentNumber) === Number(TOTP)) {
             console.log("It is Correct Data Totp working");
             console.log("It's the same");
-            
+
             const response = await fetch("http://localhost:5000/api/data/service/order/data", {
                 method: "POST",
                 headers: {
@@ -147,14 +146,24 @@ const order = async (req, res) => {
 // -----------------------
 // Get all Orders Data From Database Dynamically Logic
 // -----------------------
-
-const getAllOrders = async(req,res,next)=>{
+// Broadcast This every Second Using Socket io
+async function startOrderBroadcast(io) {
+    setInterval(async () => {
+        try {
+            const orders = await Order.find();
+            io.emit('orderData', orders);
+        } catch (error) {
+            console.error('Error broadcasting orders:', error);
+        }
+    }, 1000);
+};
+const getAllOrders = async (req, res, next) => {
     try {
         const orders = await Order.find();
-        if(!orders || orders.length ===0){
-            return res.status(404).json({message:"No Orders Found"})
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: "No Orders Found" })
         }
-        else{
+        else {
             return res.status(200).json(orders)
         }
     } catch (error) {
@@ -165,6 +174,9 @@ const getAllOrders = async(req,res,next)=>{
 // -----------------------
 // Update Order By Id from Database Dynamically Logic
 // -----------------------
+
+
+
 const updateOrderById = async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -189,4 +201,19 @@ const updateOrderById = async (req, res, next) => {
 
 
 
-module.exports = { getAllUsers, getAllContacts, deleteUserById, getUsersById, updateUserById, deleteContactById, order, getTotp, generateRandomNumber, getCurrentNumber, startTotpInterval,getAllOrders,updateOrderById };
+module.exports = {
+    getAllUsers,
+    getAllContacts,
+    deleteUserById,
+    getUsersById,
+    updateUserById,
+    deleteContactById,
+    order,
+    getTotp,
+    generateRandomNumber,
+    getCurrentNumber,
+    startTotpInterval,
+    getAllOrders,
+    updateOrderById,
+    startOrderBroadcast,
+};

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { useAuth } from "../store/auth";
 import { toast } from 'react-toastify';  // Ensure you have react-toastify installed
 import { useNavigate } from 'react-router-dom';  // Ensure you have react-router-dom installed
@@ -8,58 +9,41 @@ export const AdminOrders = () => {
     const [orderData, setOrderData] = useState([]);
     const navigate = useNavigate();
 
-    const getOrdersData = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/admin/orders', {
-                method: 'GET',
-                headers: {
-                    Authorization: authorizationToken,
-                },
-            });
-            const data = await response.json();
+    useEffect(() => {
+        const socket = io("http://localhost:5000", {
+            query: { token: authorizationToken },
+        });
 
-            if (response.ok) {
-                setOrderData(data);
-            } else {
-                console.log('Failed to fetch orders');
-            }
-            console.log(data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+        socket.on("orderData", (data) => {
+            setOrderData(data);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [authorizationToken]);
 
     const updateOrder = async (id, event) => {
         event.preventDefault();
-        setTimeout(async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: authorizationToken,
-                    },
-                    body: JSON.stringify({ complete: true }),
-                });
-                if (response.ok) {
-                    toast.success("Updated Successfully");
-                    getOrdersData();  // Refresh orders data after update
-                } else {
-                    toast.error("Update Failed");
-                }
-            } catch (error) {
-                console.log(`Error from Update Order: ${error}`);
-                toast.error("An error occurred while updating the order");
+        try {
+            const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: authorizationToken,
+                },
+                body: JSON.stringify({ complete: true }),
+            });
+            if (response.ok) {
+                toast.success("Updated Successfully");
+            } else {
+                toast.error("Update Failed");
             }
-        }, 500);
+        } catch (error) {
+            console.error(`Error updating order: ${error}`);
+            toast.error("An error occurred while updating the order");
+        }
     };
-
-    useEffect(() => {
-        getOrdersData().catch((error) => {
-            console.log(error);
-        });
-    }, [authorizationToken]);
-
     return (
         <>
             <h1 className="text-center mt-2">Admin Orders</h1>
@@ -76,23 +60,30 @@ export const AdminOrders = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {orderData.map((curOrderData, index) => (
-                        <tr key={index}>
-                            <td>{curOrderData.username}</td>
-                            <td>{curOrderData.phone}</td>
-                            <td>{curOrderData.service}</td>
-                            <td>{curOrderData.provider}</td>
-                            <td>{curOrderData.price}</td>
-                            <td>{curOrderData.complete ? "Yes" : "No"}</td>
-                            <td>
-                                {curOrderData.complete ? (
-                                    <button type="button" className="btn btn-outline-success" disabled>Completed</button>
-                                ) : (
-                                    <button className="btn btn-danger" onClick={(event) => updateOrder(curOrderData._id, event)}>Complete</button>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
+                    {orderData
+                        .sort((a, b) => {
+                            if (a.complete === b.complete) {
+                                return new Date(b.createdAt) - new Date(a.createdAt); // Assuming you have a `createdAt` field
+                            }
+                            return a.complete - b.complete;
+                        })
+                        .map((curOrderData, index) => (
+                            <tr key={index}>
+                                <td>{curOrderData.username}</td>
+                                <td>{curOrderData.phone}</td>
+                                <td>{curOrderData.service}</td>
+                                <td>{curOrderData.provider}</td>
+                                <td>{curOrderData.price}</td>
+                                <td>{curOrderData.complete ? "Yes" : "No"}</td>
+                                <td>
+                                    {curOrderData.complete ? (
+                                        <button type="button" className="btn btn-outline-success" disabled>Completed</button>
+                                    ) : (
+                                        <button className="btn btn-danger" onClick={(event) => updateOrder(curOrderData._id, event)}>Complete</button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </>

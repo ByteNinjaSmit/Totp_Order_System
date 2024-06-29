@@ -9,7 +9,7 @@ const serviceRoute = require("./router/service-router");
 const adminRoute = require("./router/admin-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
-const { generateRandomNumber, getCurrentNumber, startTotpInterval } = require("./controllers/admin-controller");
+const { startTotpInterval, startOrderBroadcast } = require("./controllers/admin-controller");
 
 const app = express();
 const server = http.createServer(app);
@@ -33,6 +33,10 @@ app.use(errorMiddleware);
 
 // Start TOTP generation and emit updates
 startTotpInterval(io);
+
+// Start broadcasting orders
+startOrderBroadcast(io);
+
 
 const PORT = 5000;
 
