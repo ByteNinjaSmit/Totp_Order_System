@@ -18,5 +18,6 @@ router.route("/totp/data").post(authMiddleware, adminController.order);
 // GET Order 
 router.route('/orders').get(authMiddleware, adminMiddleware, adminController.getAllOrders);
 router.route('/orders/update/:id').patch(authMiddleware, adminMiddleware, adminController.updateOrderById);
+router.route("/orders/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deleteOrderById);
 
 module.exports = router;

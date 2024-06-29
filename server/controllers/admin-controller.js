@@ -198,7 +198,18 @@ const updateOrderById = async (req, res, next) => {
     }
 };
 
-
+// -----------------------
+// Delete Order By Id from Database Dynamically Logic
+// -----------------------
+const deleteOrderById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await Order.deleteOne({ _id: id });
+        return res.status(200).json({ message: "order Deleted Successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 module.exports = {
@@ -216,4 +227,5 @@ module.exports = {
     getAllOrders,
     updateOrderById,
     startOrderBroadcast,
+    deleteOrderById,
 };

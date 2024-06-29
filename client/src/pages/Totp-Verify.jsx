@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from "./../store/auth";
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 export const TotpVerify = () => {
   const [totpCode, setTotpCode] = useState(['', '', '', '', '', '']);
@@ -10,7 +10,7 @@ export const TotpVerify = () => {
   const [error, setError] = useState(null);
   const params = useParams();
   const inputs = useRef([]);
-  const { user, authorizationToken } = useAuth();
+  const { user, isLoggedIn, authorizationToken } = useAuth();
   const [orderData, setOrderData] = useState({
     totp: "",
     username: "",
@@ -20,6 +20,10 @@ export const TotpVerify = () => {
     price: "",
   });
 
+  // If Not User And Not Loggedin Navigate to Login Page
+  if (!user && !isLoggedIn) {
+    return <Navigate to="/login" />
+  }
   // ----------------
   // To Get Single Service Data Dynamically Logic
   // ------------------------
@@ -122,51 +126,74 @@ export const TotpVerify = () => {
       }
     }
   };
-
-  return (
-    <>
-      <h1 style={{ textAlign: 'center', marginTop: '20px' }}>Verify TOTP</h1>
-      <form style={{ textAlign: 'center', marginTop: '20px' }} onSubmit={handleSubmit}>
-        {totpCode.map((digit, index) => (
-          <input
-            key={index}
-            type="text"
-            value={digit}
-            onChange={handleInputChange(index)}
-            onKeyPress={handleKeyPress}
-            onKeyDown={handleKeyDown(index)}
-            maxLength={1}
-            ref={(el) => (inputs.current[index] = el)}
-            required
-            style={{
-              width: '40px',
-              height: '40px',
-              margin: '10px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              textAlign: 'center',
-              fontSize: '24px',
-              WebkitAppearance: 'none',
-              MozAppearance: 'textfield',
-            }}
-          />
-        ))}
-        {error && <div style={{ color: 'red' }}>{error}</div>}
-        <hr style={{ border: 'none', borderTop: '1px solid #ccc' }} />
-        <button
-          type="submit"
-          style={{
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          Submit
-        </button>
-      </form>
-    </>
-  );
+  const handleCancel = () => {
+    navigate("/service");
+  };
+  if (user) {
+    return (
+      <>
+        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>Verify TOTP</h1>
+        <form style={{ textAlign: 'center', marginTop: '20px' }} onSubmit={handleSubmit}>
+          {totpCode.map((digit, index) => (
+            <input
+              key={index}
+              type="text"
+              value={digit}
+              onChange={handleInputChange(index)}
+              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown(index)}
+              maxLength={1}
+              ref={(el) => (inputs.current[index] = el)}
+              required
+              style={{
+                width: '40px',
+                height: '40px',
+                margin: '10px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                textAlign: 'center',
+                fontSize: '24px',
+                WebkitAppearance: 'none',
+                MozAppearance: 'textfield',
+              }}
+            />
+          ))}
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <hr style={{ border: 'none', borderTop: '1px solid #ccc' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+            <button
+              className='mx-2 mt-2'
+              type="submit"
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+              }}
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              style={{
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                backgroundColor: '#f44336', // Changed button color for Cancel
+                marginLeft: '10px', // Added margin for spacing
+              }}
+              className="btn btn-danger mx-2 mt-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+        <hr />
+      </>
+    );
+  }
 };

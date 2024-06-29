@@ -23,6 +23,24 @@ export const AdminOrders = () => {
         };
     }, [authorizationToken]);
 
+    const deleteOrder = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/admin/orders/delete/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: authorizationToken,
+                },
+            });
+            const data = await response.json();
+            // console.log(`User After Delete ${data}`);
+            if (response.ok){
+                toast.success("Order Deleted Successfully");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const updateOrder = async (id, event) => {
         event.preventDefault();
         try {
@@ -57,6 +75,7 @@ export const AdminOrders = () => {
                         <th>Price</th>
                         <th>Complete</th>
                         <th>Action</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,6 +100,9 @@ export const AdminOrders = () => {
                                     ) : (
                                         <button className="btn btn-danger" onClick={(event) => updateOrder(curOrderData._id, event)}>Complete</button>
                                     )}
+                                </td>
+                                <td>
+                                    <button className="btn btn-danger" onClick={() => deleteOrder(curOrderData._id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
