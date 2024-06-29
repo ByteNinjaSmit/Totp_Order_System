@@ -11,7 +11,7 @@ export const AdminOrders = () => {
 
     useEffect(() => {
         const socket = io("http://localhost:5000", {
-            query: { token: authorizationToken },
+            auth: { token: authorizationToken },
         });
 
         socket.on("orderData", (data) => {

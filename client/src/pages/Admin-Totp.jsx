@@ -11,7 +11,9 @@ const AdminTotp = () => {
 
   useEffect(() => {
     const socket = io("http://localhost:5000", {
-      query: { token: authorizationToken },
+      auth: { 
+        token: authorizationToken 
+      },
     });
 
     socket.on("connect", () => {

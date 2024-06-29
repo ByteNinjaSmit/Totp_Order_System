@@ -9,6 +9,7 @@ const serviceRoute = require("./router/service-router");
 const adminRoute = require("./router/admin-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
+const adminAuthMiddleware = require('./middlewares/io-admin-middleware'); // Import io-admin middleware
 const { startTotpInterval, startOrderBroadcast } = require("./controllers/admin-controller");
 
 const app = express();
@@ -31,12 +32,14 @@ app.use("/api/admin", adminRoute);
 
 app.use(errorMiddleware);
 
+// WebSocket middleware for admin operations
+io.use((socket, next) => adminAuthMiddleware(socket, next));
+
 // Start TOTP generation and emit updates
 startTotpInterval(io);
 
 // Start broadcasting orders
 startOrderBroadcast(io);
-
 
 const PORT = 5000;
 
