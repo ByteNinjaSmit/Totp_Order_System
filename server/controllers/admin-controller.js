@@ -113,24 +113,34 @@ const order = async (req, res) => {
         const { totp, username, phone, service, provider, price } = req.body;
         const TOTP = totp;
         const authorizationToken = req.token;
-        console.log("TOTP:", TOTP);
-        console.log("Username:", username);
-        console.log("Phone:", phone);
-        console.log("Service:", service);
-        console.log("Provider:", provider);
-        console.log("Price:", price);
 
-        if (currentNumber === TOTP) {
+        if (Number(currentNumber) === Number(TOTP)) {
             console.log("It is Correct Data Totp working");
-            console.log("its Same");
+            console.log("It's the same");
+            
+            const response = await fetch("http://localhost:5000/api/data/service/order/data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": authorizationToken,
+                },
+                body: JSON.stringify({ username, phone, service, provider, price }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const responseData = await response.json();
+            console.log("Order placed successfully:", responseData);
+            return res.status(200).json(responseData);
         } else {
-            console.log("is Not Same");
-            console.log(`Current Number is ${currentNumber}  and TOTP is: ${TOTP}`);
+            return res.status(400).json({ message: "Invalid TOTP" });
         }
     } catch (error) {
         console.error("Error placing order:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 module.exports = { getAllUsers, getAllContacts, deleteUserById, getUsersById, updateUserById, deleteContactById, order, getTotp, generateRandomNumber, getCurrentNumber, startTotpInterval };

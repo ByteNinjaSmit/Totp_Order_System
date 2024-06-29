@@ -80,7 +80,7 @@ export const TotpVerify = () => {
           body: JSON.stringify(updatedOrderData),
         });
         if (response.ok) {
-          toast.success("Order Successful");
+          toast.success("Order Placed Successful");
           navigate("/");
         } else {
           toast.error("Order Failed, Enter Correct TOTP");
@@ -88,7 +88,7 @@ export const TotpVerify = () => {
       } catch (error) {
         console.log(`Error from TOTP post: ${error}`);
       }
-    }, 1500);
+    }, 500);
   };
 
 
