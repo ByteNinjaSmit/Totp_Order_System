@@ -37,6 +37,9 @@ export const AdminLayout = () => {
                     </div>
                 </header>
                 <Outlet />
+                {/* <h1 className="text-center mt-3">
+                    Admin Dashboard
+                </h1> */}
             </>
         );
     }

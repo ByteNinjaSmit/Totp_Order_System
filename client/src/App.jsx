@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Service from "./pages/Service";
 import Contact from "./pages/Contact";
-import Navbar from "./components/Navbar";
+import Navbar1 from "./components/Navbar";
 import Error from "./pages/Error";
 import Footer from "./components/Footer";
 import {Logout} from "./pages/Logout";
@@ -25,7 +25,7 @@ const App = () => {
     <>
       <BrowserRouter>
         <div className="app">
-          <Navbar />
+          <Navbar1 />
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/about" element={<About />} />
