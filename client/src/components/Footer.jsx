@@ -13,7 +13,7 @@ export default function Footer() {
       <div className='text-center p-3 bg-dark text-white'>
         &copy; {new Date().getFullYear()} Copyright:{' '}
         <Link className='text-white text-decoration-none' to="https://mdbootstrap.com/">
-          MERN
+          ByteNinjaSmit
         </Link>
       </div>
     </MDBFooter>

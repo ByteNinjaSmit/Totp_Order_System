@@ -47,7 +47,7 @@ const Navbar1 = () => {
               </div>
               <div className="flex items-center justify-center ">
                 <div className="flex-shrink-0">
-                  <h1 className="text-xl font-bold text-purple-500">MERN_2024</h1>
+                  <h1 className="text-xl font-bold text-red-500">RestPos</h1>
                 </div>
               </div>
               <div className="hidden sm:flex flex-1 items-center justify-center">
