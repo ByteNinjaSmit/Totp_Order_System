@@ -61,6 +61,7 @@ cd server
 
 **Server:** Node Js, Express, Socket.io, Mongodb, mongoose
 
+![Logo](https://www.imaginarycloud.com/blog/content/images/2023/03/MERN.webp)
 
 ## Features
 
