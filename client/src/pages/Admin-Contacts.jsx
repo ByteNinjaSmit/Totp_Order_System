@@ -1,29 +1,23 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../store/auth";
 import { toast } from "react-toastify";
-
+import { io } from "socket.io-client";
 
 export const AdminContacts = () => {
     const { authorizationToken } = useAuth();
     const [contactData, setContactData] = useState([]);
-    const getContactsData = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/admin/contacts', {
-                method: 'GET',
-                headers: {
-                    Authorization: authorizationToken,
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setContactData(data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
-    // Contact delete Button
+    useEffect(() => {
+        const socket = io("http://localhost:5000", {
+            auth: { token: authorizationToken },
+        });
+        socket.on("contactData", (data) => {
+            setContactData(data);
+        });
+        return () => {
+            socket.disconnect();
+        };
+    }, [authorizationToken]);
 
     const deleteContactById = async (id) => {
         try {
@@ -34,19 +28,19 @@ export const AdminContacts = () => {
                 },
             });
             if (response.ok) {
-                toast.success("Contact Deleted Successfull")
-            }else{
-                toast.alert("Contact Not Delete Successfull")
+                toast.success("Contact Deleted Successfully");
+            } else {
+                toast.error("Failed to delete contact");
             }
         } catch (error) {
-            console.log(error);
+            console.error("Error deleting contact:", error);
+            toast.error("Failed to delete contact");
         }
     };
-    useEffect(() => {
-        getContactsData().catch((error) => {
-            setError(error.message);
-        });
-    }, [authorizationToken]);
+
+    // if (error) {
+    //     return <p>Error fetching contacts: {error}</p>;
+    // }
     return (
         <>
             <h1 className="w-100 text-center mt-3">Admin Contacts Panel</h1>
@@ -60,18 +54,16 @@ export const AdminContacts = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {contactData.map((curContactData, index) => {
-                        return (
-                            <tr key={index}>
-                                <td>{curContactData.username}</td>
-                                <td>{curContactData.email}</td>
-                                <td>{curContactData.message}</td>
-                                <td>
-                                    <button className="btn btn-danger" onClick={() => deleteContactById(curContactData._id)}>Delete</button>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                    {contactData.map((curContactData, index) => (
+                        <tr key={index}>
+                            <td>{curContactData.username}</td>
+                            <td>{curContactData.email}</td>
+                            <td>{curContactData.message}</td>
+                            <td>
+                                <button className="btn btn-danger" onClick={() => deleteContactById(curContactData._id)}>Delete</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </>

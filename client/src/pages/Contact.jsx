@@ -5,6 +5,9 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useAuth } from "./../store/auth";
+import { toast } from 'react-toastify';
+
+
 
 const defaultContactFormData={
   username: "",
@@ -58,10 +61,10 @@ const Contact = () => {
         setContact(defaultContactFormData);
         const data = await response.json();
         console.log(data);
-        alert("Form Submitted Successfully");
+        toast.success("Form Submitted Successfully");
       }
     } catch (error) {
-      alert("Form Submission Failed");
+      toast.alert("Form Submission Failed");
       console.log(error);
     }
 

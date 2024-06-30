@@ -10,7 +10,7 @@ const adminRoute = require("./router/admin-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
 const adminAuthMiddleware = require('./middlewares/io-admin-middleware'); // Import io-admin middleware
-const { startTotpInterval, startOrderBroadcast } = require("./controllers/admin-controller");
+const { startTotpInterval, startOrderBroadcast,startContactBroadcast } = require("./controllers/admin-controller");
 
 const app = express();
 const server = http.createServer(app);
@@ -40,6 +40,9 @@ startTotpInterval(io);
 
 // Start broadcasting orders
 startOrderBroadcast(io);
+
+// Start Broadcasting Contacts
+startContactBroadcast(io);
 
 const PORT = 5000;
 

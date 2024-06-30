@@ -78,15 +78,46 @@ const deleteUserById = async (req, res, next) => {
     }
 };
 
-const deleteContactById = async (req, res, next) => {
+//  Contact Login Get All Contacts and Delete Contacs
+// also broadCast Data Every Seconds
+async function startContactBroadcast(io) {
+    setInterval(async () => {
+        try {
+            const contacts = await Contact.find();
+            io.emit('contactData', contacts);
+        } catch (error) {
+            console.error('Error broadcasting Contacts:', error);
+        }
+    }, 1000);
+};
+const getAllContacts = async (req, res, next) => {
     try {
-        const id = req.params.id;
-        await Contact.deleteOne({ _id: id });
-        res.status(200).json({ message: "Contact Deleted Successfully" });
+        const contacts = await Contact.find();
+        if (!contacts || contacts.length === 0) {
+            res.status(404).json({ message: "No Contacts Found" });
+        }else{
+            res.status(200).json(contacts);
+        }        
     } catch (error) {
         next(error);
     }
 };
+
+const deleteContactById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deletedContact = await Contact.findByIdAndDelete(id);
+        if (!deletedContact) {
+            res.status(404).json({ message: "Contact not found" });
+        }
+        res.status(200).json({ message: "Contact Deleted Successfully" });
+    } catch (error) {
+        console.error("Error deleting contact:", error);
+        next(error); // Pass the error to the error handling middleware
+    }
+};
+
+
 
 const getTotp = async (req, res, next) => {
     try {
@@ -96,17 +127,6 @@ const getTotp = async (req, res, next) => {
     }
 };
 
-const getAllContacts = async (req, res, next) => {
-    try {
-        const contacts = await Contact.find();
-        if (!contacts || contacts.length === 0) {
-            res.status(404).json({ message: "No Contacts Found" });
-        }
-        res.status(200).json(contacts);
-    } catch (error) {
-        next(error);
-    }
-};
 
 const order = async (req, res) => {
     try {
@@ -155,7 +175,7 @@ async function startOrderBroadcast(io) {
         } catch (error) {
             console.error('Error broadcasting orders:', error);
         }
-    }, 1000);
+    }, 900);
 };
 const getAllOrders = async (req, res, next) => {
     try {
@@ -228,4 +248,5 @@ module.exports = {
     updateOrderById,
     startOrderBroadcast,
     deleteOrderById,
+    startContactBroadcast,
 };
