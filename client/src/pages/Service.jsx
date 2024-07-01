@@ -13,7 +13,7 @@ const Service = () => {
   return (
     <section className="py-24 bg-gray-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 className="font-manrope font-bold text-4xl text-black mb-8 max-xl:text-center">Services</h2>
+        <h2 className="font-manrope font-bold text-5xl text-black mb-10 max-xl:text-center text-center">Services</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
           {services.map((curElem, index) => {
             const { Price, Description, Provider, Service, _id } = curElem;

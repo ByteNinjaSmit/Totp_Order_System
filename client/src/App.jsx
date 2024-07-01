@@ -13,12 +13,12 @@ import {Logout} from "./pages/Logout";
 import "./App.css";
 import { AdminLayout } from "./components/layouts/Admin-Layout";
 import { AdminUsers } from "./pages/Admin-Users";
-import { AdminContacts } from "./pages/Admin-Contacts";
+import AdminContacts  from "./pages/Admin-Contacts";
 import { AdminUpdate } from "./pages/Admin-Update";
 import AdminTotp from "./pages/Admin-Totp"; // Note the use of default import
 import { TotpVerify } from "./pages/Totp-Verify";
-import { AdminOrders } from "./pages/Admin-Orders";
-
+import AdminOrders  from "./pages/Admin-Orders";
+import {AdminServices} from "./pages/Admin-Services"
 
 const App = () => {
   return (
@@ -38,6 +38,7 @@ const App = () => {
             <Route path="*" element={<Error />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="users" element={<AdminUsers />} />
+              <Route path="services" element={<AdminServices />} />
               <Route path="contacts" element={<AdminContacts />} />
               <Route path="users/:id/edit" element={<AdminUpdate />} />
               <Route path="totp/:id" element={<AdminTotp />} />

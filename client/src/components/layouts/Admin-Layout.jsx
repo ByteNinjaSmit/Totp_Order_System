@@ -7,40 +7,92 @@ import { BsCartCheck } from "react-icons/bs";
 
 export const AdminLayout = () => {
     const { user, isLoading } = useAuth();
+
     if (isLoading) {
         return (
-            <>
+            <div className="flex justify-center items-center min-h-screen">
                 <h1>Loading ...........</h1>
-            </>
-        )
+            </div>
+        );
     }
+
     if (!user.isAdmin) {
-        return <Navigate to="/" />
+        return <Navigate to="/" />;
     } else {
         return (
-            <>
-                <header className="w-100">
-                    <div className="container center">
-                        <nav className="center">
-                            <ul className="center mt-4 mb-1" style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                                <li><NavLink to="/admin"><FaHome /> Home</NavLink></li>
-                                <li><NavLink to="/admin/users"><FaUser /> users</NavLink></li>
-                                <li><NavLink to="/admin/services"><FaRegListAlt /> services</NavLink></li>
-                                {/* For Orders */}
-                                <li><NavLink to="/admin/orders"><BsCartCheck /> Orders</NavLink></li>
-                                <li><NavLink to="/admin/contacts"><FaMessage /> Contacts</NavLink></li>
-                                <li><NavLink to={`/admin/totp/${user._id}`}>
-                                    <IoMdTimer />Totp
-                                </NavLink></li>
+            <div className="flex flex-col lg:flex-row min-h-screen">
+                <header className="w-full lg:w-1/6 border-b lg:border-r border-gray-300 p-5 bg-white">
+                    <div className="container mx-auto">
+                        <nav>
+                            <ul className="flex flex-wrap lg:flex-col items-center lg:items-start justify-center lg:justify-start gap-2 lg:gap-0 lg:space-y-5">
+                                <li className="w-full">
+                                    <NavLink
+                                        to="/admin"
+                                        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full justify-center lg:justify-start"
+                                        activeclassname="bg-gray-200"
+                                    >
+                                        <FaHome />
+                                        <span>Home</span>
+                                    </NavLink>
+                                </li>
+                                <li className="w-full">
+                                    <NavLink
+                                        to="/admin/users"
+                                        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full justify-center lg:justify-start"
+                                        activeclassname="bg-gray-200"
+                                    >
+                                        <FaUser />
+                                        <span>Users</span>
+                                    </NavLink>
+                                </li>
+                                <li className="w-full">
+                                    <NavLink
+                                        to="/admin/services"
+                                        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full justify-center lg:justify-start"
+                                        activeclassname="bg-gray-200"
+                                    >
+                                        <FaRegListAlt />
+                                        <span>Services</span>
+                                    </NavLink>
+                                </li>
+                                <li className="w-full">
+                                    <NavLink
+                                        to="/admin/orders"
+                                        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full justify-center lg:justify-start"
+                                        activeclassname="bg-gray-200"
+                                    >
+                                        <BsCartCheck />
+                                        <span>Orders</span>
+                                    </NavLink>
+                                </li>
+                                <li className="w-full">
+                                    <NavLink
+                                        to="/admin/contacts"
+                                        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full justify-center lg:justify-start"
+                                        activeclassname="bg-gray-200"
+                                    >
+                                        <FaMessage />
+                                        <span>Contacts</span>
+                                    </NavLink>
+                                </li>
+                                <li className="w-full">
+                                    <NavLink
+                                        to={`/admin/totp/${user._id}`}
+                                        className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full justify-center lg:justify-start"
+                                        activeclassname="bg-gray-200"
+                                    >
+                                        <IoMdTimer />
+                                        <span>Totp</span>
+                                    </NavLink>
+                                </li>
                             </ul>
                         </nav>
                     </div>
                 </header>
-                <Outlet />
-                {/* <h1 className="text-center mt-3">
-                    Admin Dashboard
-                </h1> */}
-            </>
+                <main className="flex-1 p-4">
+                    <Outlet />
+                </main>
+            </div>
         );
     }
 };
