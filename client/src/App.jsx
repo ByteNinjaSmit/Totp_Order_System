@@ -19,6 +19,7 @@ import AdminTotp from "./pages/Admin-Totp"; // Note the use of default import
 import { TotpVerify } from "./pages/Totp-Verify";
 import AdminOrders  from "./pages/Admin-Orders";
 import {AdminServices} from "./pages/Admin-Services"
+import { Cart } from "./pages/Cart-Page";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
             <Route exact path="/register" element={<Register />} />
             <Route exact path="/service" element={<Service />} />
             <Route exact path="/service/:id/totp" element={<TotpVerify />} />
+            <Route exact path="/cart" element={<Cart />} />
             <Route exact path="/contact" element={<Contact />} />
             <Route exact path="/logout" element={<Logout />} />
             <Route path="*" element={<Error />} />

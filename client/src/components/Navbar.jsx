@@ -3,6 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../store/auth';
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { useCart } from "../store/cart"
+import { Badge } from 'antd';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -10,6 +13,7 @@ function classNames(...classes) {
 
 const Navbar1 = () => {
   const location = useLocation();
+  const { cart, setCart } = useCart(); 
   const { isLoggedIn, isAdmin } = useAuth();
   const [isAdminState, setIsAdminState] = useState(isAdmin);
 
@@ -32,7 +36,7 @@ const Navbar1 = () => {
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 w-[92%] ">
+          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 w-[92%]">
             <div className="relative flex h-16 items-center justify-center">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button */}
@@ -45,7 +49,7 @@ const Navbar1 = () => {
                   )}
                 </Disclosure.Button>
               </div>
-              <div className="flex items-center justify-center ">
+              <div className="flex items-center justify-center">
                 <div className="flex-shrink-0">
                   <h1 className="text-xl font-bold text-red-500">RestPos</h1>
                 </div>
@@ -67,7 +71,16 @@ const Navbar1 = () => {
                   ))}
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-1 sm:pr-0">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-1 sm:pr-0 space-x-4">
+                {!open && (
+                  <Badge count={cart?.length} className='max-sm:hidden'>
+                  <Link to="/cart" className='max-sm:hidden'>
+                    <button className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-md">
+                      <AiOutlineShoppingCart className="h-6 w-6" />
+                    </button>
+                  </Link>
+                  </Badge>
+                )}
                 {isLoggedIn ? (
                   <Link to="/logout">
                     <button className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-700">
@@ -101,6 +114,13 @@ const Navbar1 = () => {
                   {item.name}
                 </Disclosure.Button>
               ))}
+              <Badge count={cart?.length}>
+              <Link to="/cart">
+                <button className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-md">
+                  <AiOutlineShoppingCart className="h-6 w-6" />
+                </button>
+              </Link>
+              </Badge>
             </div>
           </Disclosure.Panel>
         </>

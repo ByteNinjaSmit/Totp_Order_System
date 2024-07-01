@@ -1,13 +1,28 @@
 const { Schema, modal, default: mongoose, model } = require("mongoose");
 
-const orderSchema = new Schema({
-    username: { type: String, required: true },
-    phone: { type: String, required: true },
-    service: { type: String, required: true },
-    provider: { type: String, required: true },
-    price: { type: String, required: true },
-    complete: { type: Boolean, default: false },
-});
+const orderSchema = new Schema(
+    {
+        products: [{
+            type: mongoose.ObjectId,
+            ref: "Product",
+        },
+        ],
+        payment: {
+
+        },
+        buyer: {
+            type: mongoose.ObjectId,
+            ref: "User",
+        },
+        status: {
+            type: String,
+            default: "Not Process",
+            enum: ["Not Process", "Processing", "Deliverd", "Cancel"],
+        },
+
+    },
+    { timestamps: true }
+);
 
 
 //  Create a model or collection
