@@ -7,7 +7,7 @@ export const Cart = () => {
   const { user } = useAuth();
   const { cart, setCart } = useCart();
   const [quantities, setQuantities] = useState({});
-  const [tableNo, setTableNo] = useState(1); // State for table number dropdown
+  const [tableNo, setTableNo] = useState(""); // State for table number dropdown
   const [data, setData] = useState({
     paymentMethod: "",
     tableNo: "",
@@ -215,10 +215,10 @@ export const Cart = () => {
                       <div className="flex items-center h-full">
                         <button
                           onClick={() => decreaseQuantity(item._id)}
-                          className="group rounded-l-xl px-4 py-[16px] md:px-5 md:py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus-within:outline-gray-300"
+                          className="group rounded-l-xl px-4 py-[16px] md:px-5 md:py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-colors duration-300 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus:outline-none"
                         >
                           <svg
-                            className="stroke-gray-900 transition-all duration-500 group-hover:stroke-black"
+                            className="stroke-gray-900 transition-colors duration-300 group-hover:stroke-black"
                             xmlns="http://www.w3.org/2000/svg"
                             width="22"
                             height="22"
@@ -227,7 +227,7 @@ export const Cart = () => {
                           >
                             <path
                               d="M16.5 11H5.5"
-                              stroke=""
+                              stroke="currentColor"
                               strokeWidth="1.6"
                               strokeLinecap="round"
                             />
@@ -242,10 +242,10 @@ export const Cart = () => {
                         />
                         <button
                           onClick={() => increaseQuantity(item._id)}
-                          className="group rounded-r-xl px-4 py-[16px] md:px-5 md:py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus-within:outline-gray-300"
+                          className="group rounded-r-xl px-4 py-[16px] md:px-5 md:py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-colors duration-300 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus:outline-none"
                         >
                           <svg
-                            className="stroke-gray-900 transition-all duration-500 group-hover:stroke-black"
+                            className="stroke-gray-900 transition-colors duration-300 group-hover:stroke-black"
                             xmlns="http://www.w3.org/2000/svg"
                             width="22"
                             height="22"
@@ -254,12 +254,13 @@ export const Cart = () => {
                           >
                             <path
                               d="M11 5.5V16.5M16.5 11H5.5"
-                              stroke=""
+                              stroke="currentColor"
                               strokeWidth="1.6"
                               strokeLinecap="round"
                             />
                           </svg>
                         </button>
+
                       </div>
                     </div>
                     <div className="flex items-center justify-center md:justify-end mt-4 md:mt-0 h-full">
@@ -299,6 +300,7 @@ export const Cart = () => {
                     value={tableNo}
                     onChange={handleTableNoChange}
                   >
+                    <option value="">Select Table Number</option>
                     {[...Array(12)].map((_, index) => (
                       <option key={index} value={index + 1}>
                         {index + 1}
@@ -340,7 +342,10 @@ export const Cart = () => {
                   to={`/service/${user._id}/checkout/totp`}
                   state={data}
                 >
-                  <button className="w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700">
+                  <button
+                    className={`w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700 ${!data.paymentMethod || !data.tableNo ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={!data.paymentMethod || !data.tableNo}
+                  >
                     Checkout
                   </button>
                 </Link>

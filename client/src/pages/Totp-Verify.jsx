@@ -12,6 +12,8 @@ const TotpVerify = () => {
   const inputs = useRef([]);
   const { cart, setCart } = useCart();
   const { user, isLoggedIn, authorizationToken } = useAuth();
+  const [failedAttempts, setFailedAttempts] = useState(0);
+
 
   if (!user && !isLoggedIn) {
     return <navigate to="/login" />;
@@ -46,6 +48,12 @@ const TotpVerify = () => {
           navigate("/");
         } else {
           toast.error('Order Failed, Enter Correct TOTP');
+          setTotpCode(['', '', '', '', '', ''])
+          setFailedAttempts(prev => prev + 1);
+          if (failedAttempts + 1 >= 5) {
+            navigate("/cart");
+            toast.error("Maximum attempts exceeded. Please try again later.");
+          }
         }
       } catch (error) {
         console.log(`Error from TOTP post: ${error}`);
