@@ -7,8 +7,17 @@ const orderSchema = new Schema(
             ref: "Product",
         },
         ],
-        payment: {
-
+        paymentMethod: {
+            type: String,
+            required: true,
+        },
+        tableNo: {
+            type: Number,
+            required: true,
+        },
+        paymentStatus: {
+            type: String,
+            required: true,
         },
         buyer: {
             type: mongoose.ObjectId,
@@ -19,7 +28,6 @@ const orderSchema = new Schema(
             default: "Not Process",
             enum: ["Not Process", "Processing", "Deliverd", "Cancel"],
         },
-
     },
     { timestamps: true }
 );

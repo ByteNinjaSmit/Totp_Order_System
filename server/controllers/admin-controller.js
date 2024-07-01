@@ -95,9 +95,9 @@ const getAllContacts = async (req, res, next) => {
         const contacts = await Contact.find();
         if (!contacts || contacts.length === 0) {
             res.status(404).json({ message: "No Contacts Found" });
-        }else{
+        } else {
             res.status(200).json(contacts);
-        }        
+        }
     } catch (error) {
         next(error);
     }
@@ -127,24 +127,35 @@ const getTotp = async (req, res, next) => {
     }
 };
 
+// Sending Order
 
 const order = async (req, res) => {
     try {
-        const { totp, username, phone, service, provider, price } = req.body;
+        const { totp, cart, paymentMethod, paymentStatus, tableNo } = req.body;
         const TOTP = totp;
         const authorizationToken = req.token;
+        const id = req.params.id;
 
         if (Number(currentNumber) === Number(TOTP)) {
             console.log("It is Correct Data Totp working");
             console.log("It's the same");
 
-            const response = await fetch("http://localhost:5000/api/data/service/order/data", {
+            const response = await fetch(`http://localhost:5000/api/data/service/${id}/order/data`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": authorizationToken,
                 },
-                body: JSON.stringify({ username, phone, service, provider, price }),
+                body: JSON.stringify(
+                    {
+                        products: cart,
+                        paymentMethod: paymentMethod,
+                        paymentStatus: paymentStatus,
+                        tableNo: tableNo,
+                        buyer: id,
+
+                    }
+                ),
             });
 
             if (!response.ok) {

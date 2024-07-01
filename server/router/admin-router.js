@@ -13,7 +13,7 @@ router.route("/users/update/:id").patch(authMiddleware, adminMiddleware, adminCo
 
 // Get TOTP route
 router.route("/totp").get(authMiddleware, adminMiddleware, adminController.getTotp);
-router.route("/totp/data").post(authMiddleware, adminController.order);
+router.route("/:id/orderData/totp").post(authMiddleware, adminController.order);
 
 // GET Order 
 router.route('/orders').get(authMiddleware, adminMiddleware, adminController.getAllOrders);

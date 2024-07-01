@@ -6,6 +6,6 @@ const OrderForm = require("../controllers/order-controller");
 
 router.route('/service').get(services.services);
 router.route('/service/order/data/:id').get(authMiddleware,services.OrderData);
-router.route('/service/order/data').post(authMiddleware,OrderForm);
+router.route('/service/:id/order/data').post(authMiddleware,OrderForm);
 
 module.exports=router;

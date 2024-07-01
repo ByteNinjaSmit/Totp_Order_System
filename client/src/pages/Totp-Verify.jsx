@@ -1,100 +1,57 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useAuth } from "./../store/auth";
-import { useParams } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useAuth } from './../store/auth';
+import { useParams,Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useNavigate, Navigate } from "react-router-dom";
+import { useCart } from '../store/cart';
 
-export const TotpVerify = () => {
+const TotpVerify = () => {
   const [totpCode, setTotpCode] = useState(['', '', '', '', '', '']);
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
+  const data = useLocation().state;
   const params = useParams();
   const inputs = useRef([]);
+  const { cart, setCart } = useCart();
   const { user, isLoggedIn, authorizationToken } = useAuth();
-  const [orderData, setOrderData] = useState({
-    totp: "",
-    username: "",
-    phone: "",
-    service: "",
-    provider: "",
-    price: "",
-  });
 
-  // If Not User And Not Loggedin Navigate to Login Page
   if (!user && !isLoggedIn) {
-    return <Navigate to="/login" />
+    return <navigate to="/login" />;
   }
-  // ----------------
-  // To Get Single Service Data Dynamically Logic
-  // ------------------------
-
-  const getSingleServiceData = async () => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/data/service/order/data/${params.id}`, {
-        method: "GET",
-        headers: {
-          Authorization: authorizationToken,
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch service data');
-      }
-      const data = await response.json();
-      setOrderData({
-        username: user.username,
-        phone: user.phone,
-        service: data.Service,
-        provider: data.Provider,
-        price: data.Price,
-      });
-    } catch (error) {
-      console.log(`Single Service Data Error: ${error}`);
-    }
-  };
-
-
-  useEffect(() => {
-    getSingleServiceData();
-  }, [params.id]);
-
-  // ----------------
-  // To POST Order Data Perfectly Logic
-  // ------------------------
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const fullTotpCode = totpCode.join('');
 
-    const updatedOrderData = {
-      ...orderData,
-      totp: fullTotpCode,
-    };
 
-    setOrderData(updatedOrderData);
 
-    // Delay the POST request by 1.5 seconds
     setTimeout(async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admin/totp/data", {
-          method: "POST",
+        console.log(fullTotpCode);
+        const response = await fetch(`http://localhost:5000/api/admin/${params.id}/orderData/totp`, {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: authorizationToken,
+            'Content-Type': 'application/json',
+            Authorization: authorizationToken
           },
-          body: JSON.stringify(updatedOrderData),
+          body: JSON.stringify({
+            totp: fullTotpCode,
+            cart,
+            paymentMethod: data.paymentMethod,
+            paymentStatus: data.paymentStatus,
+            tableNo: data.tableNo
+          })
         });
         if (response.ok) {
-          toast.success("Order Placed Successful");
+          toast.success('Order Placed Successfully');
+          localStorage.removeItem('cart');
+          setCart([]);
           navigate("/");
         } else {
-          toast.error("Order Failed, Enter Correct TOTP");
+          toast.error('Order Failed, Enter Correct TOTP');
         }
       } catch (error) {
         console.log(`Error from TOTP post: ${error}`);
       }
-    }, 500);
+    }, 300);
   };
-
 
   const handleInputChange = (index) => (event) => {
     const { value } = event.target;
@@ -106,7 +63,6 @@ export const TotpVerify = () => {
         inputs.current[index + 1].focus();
       }
     }
-
   };
 
   const handleKeyPress = (event) => {
@@ -126,74 +82,56 @@ export const TotpVerify = () => {
       }
     }
   };
+
   const handleCancel = () => {
-    navigate("/service");
+    navigate('/service');
   };
-  if (user) {
-    return (
-      <>
-        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>Verify TOTP</h1>
-        <form style={{ textAlign: 'center', marginTop: '20px' }} onSubmit={handleSubmit}>
-          {totpCode.map((digit, index) => (
-            <input
-              key={index}
-              type="text"
-              value={digit}
-              onChange={handleInputChange(index)}
-              onKeyPress={handleKeyPress}
-              onKeyDown={handleKeyDown(index)}
-              maxLength={1}
-              ref={(el) => (inputs.current[index] = el)}
-              required
-              style={{
-                width: '40px',
-                height: '40px',
-                margin: '10px',
-                border: '1px solid #ccc',
-                borderRadius: '5px',
-                textAlign: 'center',
-                fontSize: '24px',
-                WebkitAppearance: 'none',
-                MozAppearance: 'textfield',
-              }}
-            />
-          ))}
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-          <hr style={{ border: 'none', borderTop: '1px solid #ccc' }} />
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <button
-              className='mx-2 mt-2'
-              type="submit"
-              style={{
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              Submit
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                backgroundColor: '#f44336', // Changed button color for Cancel
-                marginLeft: '10px', // Added margin for spacing
-              }}
-              className="btn btn-danger mx-2 mt-2"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-        <hr />
-      </>
-    );
-  }
+
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="max-w-sm md:max-w-lg w-full">
+        <h1 className="text-center mt-8 mb-4 text-2xl">Verify TOTP</h1>
+        <div className='text-wrap'>
+          <form className="sm:d-block max-sm:flex-col items-center mt-4 mb-4" onSubmit={handleSubmit}>
+            {totpCode.map((digit, index) => (
+              <input
+                key={index}
+                type="text"
+                value={digit}
+                onChange={handleInputChange(index)}
+                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown(index)}
+                maxLength={1}
+                ref={(el) => (inputs.current[index] = el)}
+                required
+                className="w-16 h-16 m-2 border border-gray-300 rounded-lg text-center text-2xl outline-none focus:border-blue-500"
+              />
+            ))}
+            <div className="mt-4">
+              <div className="flex justify-center items-center">
+                <button
+                  type="submit"
+                  className="bg-green-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-green-600 transition duration-300"
+                >
+                  Submit
+                </button>
+                <Link to="/cart">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+                >
+                  Cancel
+                </button>
+                </Link>
+              </div>
+            </div>
+          </form>
+        </div>
+        <hr className="border-t border-gray-300 my-8" />
+      </div>
+    </div>
+  );
 };
+
+export default TotpVerify;

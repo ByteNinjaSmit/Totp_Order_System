@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const Service = () => {
   const { services } = useAuth();
-  const { cart, addToCart  } = useCart();
+  const { cart, addToCart } = useCart();
 
   // If services is undefined or not an array, provide a fallback
   if (!Array.isArray(services)) {
@@ -29,7 +29,7 @@ const Service = () => {
                 />
                 <div className="p-6">
                   <h2 className="text-xl font-semibold mb-2">{name}</h2>
-                  <p className="text-gray-600 mb-4">{ingredients.join(', ')}</p> {/* Join ingredients array into a string */}
+                  <p className="text-gray-600 mb-4">{ingredients.join(', ')}</p>
                   <div className="flex justify-between items-center mb-4">
                     <p className="text-gray-700">{available ? 'Available' : 'Not Available'}</p>
                     <p className="text-gray-700">{vegetarian ? 'Veg' : 'Non-Veg'}</p>
@@ -43,6 +43,7 @@ const Service = () => {
                       toast.success("Item Added To Cart");
                     }}
                     className="flex items-center justify-center w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    aria-label={`Add ${name} to Cart`}
                   >
                     <FaCartPlus className="mr-2" /> Add To Cart
                   </button>

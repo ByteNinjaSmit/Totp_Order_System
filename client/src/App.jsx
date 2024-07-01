@@ -9,16 +9,16 @@ import Contact from "./pages/Contact";
 import Navbar1 from "./components/Navbar";
 import Error from "./pages/Error";
 import Footer from "./components/Footer";
-import {Logout} from "./pages/Logout";
+import { Logout } from "./pages/Logout";
 import "./App.css";
 import { AdminLayout } from "./components/layouts/Admin-Layout";
 import { AdminUsers } from "./pages/Admin-Users";
-import AdminContacts  from "./pages/Admin-Contacts";
+import AdminContacts from "./pages/Admin-Contacts";
 import { AdminUpdate } from "./pages/Admin-Update";
 import AdminTotp from "./pages/Admin-Totp"; // Note the use of default import
-import { TotpVerify } from "./pages/Totp-Verify";
-import AdminOrders  from "./pages/Admin-Orders";
-import {AdminServices} from "./pages/Admin-Services"
+import TotpVerify from "./pages/Totp-Verify";
+import AdminOrders from "./pages/Admin-Orders";
+import { AdminServices } from "./pages/Admin-Services"
 import { Cart } from "./pages/Cart-Page";
 
 const App = () => {
@@ -33,7 +33,7 @@ const App = () => {
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/register" element={<Register />} />
             <Route exact path="/service" element={<Service />} />
-            <Route exact path="/service/:id/totp" element={<TotpVerify />} />
+            <Route exact path="/service/:id/checkout/totp" element={<TotpVerify />} />
             <Route exact path="/cart" element={<Cart />} />
             <Route exact path="/contact" element={<Contact />} />
             <Route exact path="/logout" element={<Logout />} />
