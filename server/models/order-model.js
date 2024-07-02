@@ -1,12 +1,18 @@
 const { Schema, modal, default: mongoose, model } = require("mongoose");
 
+const orderProductSchema = new Schema({
+    service: {
+        type: mongoose.ObjectId,
+        ref: "Service",
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+});
 const orderSchema = new Schema(
     {
-        products: [{
-            type: mongoose.ObjectId,
-            ref: "Product",
-        },
-        ],
+        products: [orderProductSchema],
         paymentMethod: {
             type: String,
             required: true,
@@ -21,7 +27,7 @@ const orderSchema = new Schema(
         },
         buyer: {
             type: mongoose.ObjectId,
-            ref: "User",
+            ref: "Users",
         },
         status: {
             type: String,

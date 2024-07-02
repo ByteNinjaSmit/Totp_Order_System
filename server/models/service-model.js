@@ -8,10 +8,10 @@ const serviceSchema = new Schema({
   quantity: { type: Number, default: 1 },
   price: { type: Number, required: true },
   category: { type: String, enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage'], required: true },
-  ingredients: [String], // Array of ingredients
+  ingredients: [String], 
   vegetarian: { type: Boolean, default: false },
   spicy: { type: Boolean, default: false },
-  image: { type: String }, // URL or path to the image
+  image: { type: String }, 
   available: { type: Boolean, default: true }
 });
 
