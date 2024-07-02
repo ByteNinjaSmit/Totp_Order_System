@@ -21,7 +21,8 @@ import AdminOrders from "./pages/Admin-Orders";
 import { AdminServices } from "./pages/Admin-Services"
 import { Cart } from "./pages/Cart-Page";
 import Service1 from "./pages/Service1";
-import {Qr} from "./pages/Qr";
+import { Qr } from "./pages/Qr";
+import AdminViewOrder from "./pages/Admin-View-Order";
 
 
 const App = () => {
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="users/:id/edit" element={<AdminUpdate />} />
               <Route path="totp/:id" element={<AdminTotp />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="orders/view/:id" element={<AdminViewOrder />} />
             </Route>
           </Routes>
           <Footer />

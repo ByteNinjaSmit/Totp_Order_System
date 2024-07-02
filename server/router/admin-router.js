@@ -20,4 +20,7 @@ router.route('/orders').get(authMiddleware, adminMiddleware, adminController.get
 router.route('/orders/update/:id').patch(authMiddleware, adminMiddleware, adminController.updateOrderById);
 router.route("/orders/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deleteOrderById);
 
+// View Order
+router.route('/orders/view/:id').get(authMiddleware, adminMiddleware, adminController.getOrderById);
+
 module.exports = router;

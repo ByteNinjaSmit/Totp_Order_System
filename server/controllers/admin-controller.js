@@ -1,6 +1,7 @@
 const User = require('../models/user-model');
 const Contact = require('../models/contact-model');
 const Order = require('../models/order-model');
+const Service = require('../models/service-model');
 
 // -------------------
 // Generating a ranodm Number
@@ -181,43 +182,41 @@ const order = async (req, res) => {
 async function startOrderBroadcast(io) {
     setInterval(async () => {
         try {
-            const orders = await Order.find();
+            const orders = await Order
+                .find({})
+                .populate("buyer", "-password")
+                .populate("products")
+                .sort({ createdAt: -1 }); // Sort by createdAt field in descending order
             io.emit('orderData', orders);
         } catch (error) {
             console.error('Error broadcasting orders:', error);
         }
     }, 900);
 };
+
 const getAllOrders = async (req, res, next) => {
     try {
-        const orders = await Order.find();
-        if (!orders || orders.length === 0) {
-            return res.status(404).json({ message: "No Orders Found" })
-        }
-        else {
-            return res.status(200).json(orders)
-        }
+        const orders = await Order
+            .find({})
+            .populate("buyer", "-password")
+            .populate("products")
+            .sort({ createdAt: -1 });
+        res.status(200).json(orders);
     } catch (error) {
         next(error)
     }
 };
 
-// -----------------------
-// Update Order By Id from Database Dynamically Logic
-// -----------------------
-
-
-
+// UpdateOrder
 const updateOrderById = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const { complete } = req.body;
-        console.log(complete);
+        const { status, paymentStatus } = req.body;
 
         const updateData = await Order.findOneAndUpdate(
             { _id: id },
-            { $set: { complete } },
-            { new: true } // This option returns the updated document
+            { $set: { status, paymentStatus } },
+
         );
         if (!updateData) {
             return res.status(404).json({ message: 'Order not found' });
@@ -242,6 +241,19 @@ const deleteOrderById = async (req, res, next) => {
     }
 };
 
+// Get Order By id 
+const getOrderById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const data = await Order.findOne({ _id: id })
+            .populate("buyer", "-password");
+        return res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 module.exports = {
     getAllUsers,
@@ -260,4 +272,5 @@ module.exports = {
     startOrderBroadcast,
     deleteOrderById,
     startContactBroadcast,
+    getOrderById,
 };

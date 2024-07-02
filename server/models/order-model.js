@@ -1,15 +1,37 @@
-const { Schema, modal, default: mongoose, model } = require("mongoose");
+const { Schema, model, default: mongoose } = require("mongoose");
 
 const orderProductSchema = new Schema({
     service: {
         type: mongoose.ObjectId,
-        ref: "Service",
+        ref: "Service", // Reference the Service model
     },
+    name: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    vegetarian: {
+        type: Boolean,
+        default: false
+    },
+    image: { 
+        type: String,
+        required:true
+    }, 
+    ingredients: [String],
     quantity: {
         type: Number,
         required: true,
     },
 });
+
 const orderSchema = new Schema(
     {
         products: [orderProductSchema],
@@ -27,20 +49,17 @@ const orderSchema = new Schema(
         },
         buyer: {
             type: mongoose.ObjectId,
-            ref: "Users",
+            ref: "Users", // Reference the User model
         },
         status: {
             type: String,
             default: "Not Process",
-            enum: ["Not Process", "Processing", "Deliverd", "Cancel"],
+            enum: ["Not Process", "Processing", "Delivered", "Cancel"],
         },
     },
     { timestamps: true }
 );
 
-
-//  Create a model or collection
-
-const Order = new model("Order", orderSchema);
+const Order = model("Order", orderSchema);
 
 module.exports = Order;

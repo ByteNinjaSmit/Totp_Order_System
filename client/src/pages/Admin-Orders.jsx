@@ -2,12 +2,20 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "../store/auth";
 import { toast } from "react-toastify";
+import { Select } from "antd";
+import { Link } from "react-router-dom";
+
+
+const { Option } = Select;
 
 const AdminOrders = () => {
     const { authorizationToken } = useAuth();
     const [orderData, setOrderData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalOrders, setTotalOrders] = useState(0);
+    const [statusOptions] = useState(["Not Processed", "Processing", "Delivered", "Cancelled"]);
+    const [paymentStatusOptions] = useState(["Pending", "Completed"]);
+
     const ordersPerPage = 10;
 
     useEffect(() => {
@@ -43,7 +51,6 @@ const AdminOrders = () => {
             });
             if (response.ok) {
                 toast.success("Order Deleted Successfully");
-                // Remove deleted order from state
                 setOrderData(orderData.filter(order => order._id !== id));
                 setTotalOrders(totalOrders - 1);
             } else {
@@ -55,7 +62,7 @@ const AdminOrders = () => {
         }
     };
 
-    const updateOrder = async (id) => {
+    const updateOrderStatus = async (id, newStatus) => {
         try {
             const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
                 method: "PATCH",
@@ -63,29 +70,56 @@ const AdminOrders = () => {
                     "Content-Type": "application/json",
                     Authorization: authorizationToken,
                 },
-                body: JSON.stringify({ complete: true }),
+                body: JSON.stringify({ status: newStatus }),
             });
             if (response.ok) {
-                toast.success("Order Updated Successfully");
-                // Update order status in state
+                toast.success("Order Status Updated Successfully");
                 setOrderData(orderData.map(order => {
                     if (order._id === id) {
-                        return { ...order, complete: true };
+                        return { ...order, status: newStatus };
                     }
                     return order;
                 }));
             } else {
-                toast.error("Failed to update order");
+                toast.error("Failed to update order status");
             }
         } catch (error) {
-            console.error("Error updating order:", error);
-            toast.error("Failed to update order");
+            console.error("Error updating order status:", error);
+            toast.error("Failed to update order status");
+        }
+    };
+
+    const updatePaymentStatus = async (id, newPaymentStatus) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: authorizationToken,
+                },
+                body: JSON.stringify({ paymentStatus: newPaymentStatus }),
+            });
+            if (response.ok) {
+                toast.success("Payment Status Updated Successfully");
+                setOrderData(orderData.map(order => {
+                    if (order._id === id) {
+                        return { ...order, paymentStatus: newPaymentStatus };
+                    }
+                    return order;
+                }));
+            } else {
+                toast.error("Failed to update payment status");
+            }
+        } catch (error) {
+            console.error("Error updating payment status:", error);
+            toast.error("Failed to update payment status");
         }
     };
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
     };
+
 
     return (
         <>
@@ -97,66 +131,78 @@ const AdminOrders = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" className="px-6 py-3">#</th>
                             <th scope="col" className="px-6 py-3">Username</th>
-                            <th scope="col" className="px-6 py-3">Phone</th>
-                            <th scope="col" className="px-6 py-3">Service</th>
-                            <th scope="col" className="px-6 py-3">Provider</th>
-                            <th scope="col" className="px-6 py-3">Price</th>
-                            <th scope="col" className="px-6 py-3">Complete</th>
+                            <th scope="col" className="px-6 py-3">Date</th>
+                            <th scope="col" className="px-6 py-3">Status</th>
+                            <th scope="col" className="px-6 py-3">Items</th>
+                            <th scope="col" className="px-6 py-3">Payment Status</th>
+                            <th scope="col" className="px-6 py-3">Amount</th>
+                            <th scope="col" className="px-6 py-3">View Order</th>
                             <th scope="col" className="px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-    {/* Rendering new orders (complete === false) */}
-    {orderData
-        .filter(order => !order.complete)
-        .slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage)
-        .map((curOrderData, index) => (
-            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{curOrderData.username}</td>
-                <td className="px-6 py-4">{curOrderData.phone}</td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{curOrderData.service}</td>
-                <td className="px-6 py-4">{curOrderData.provider}</td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">${curOrderData.price}</td>
-                <td className="px-6 py-4">{curOrderData.complete ? "Yes" : "No"}</td>
-                <td className="px-6 py-4">
-                    {curOrderData.complete ? (
-                        <button disabled className="font-medium text-green-600 dark:text-green-100 hover:underline cursor-not-allowed">Completed</button>
-                    ) : (
-                        <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => updateOrder(curOrderData._id)}>Complete</button>
-                    )}
-                    <button className="font-medium text-red-600 dark:text-red-500 hover:underline ml-2" onClick={() => deleteOrder(curOrderData._id)}>Delete</button>
-                </td>
-            </tr>
-        ))}
+                        {orderData
+                            .slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage)
+                            .map((order, index) => (
+                                <tr key={order._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">{index + 1}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">{order?.buyer?.username}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">{new Date(order.createdAt).toLocaleString()
+                                    }</td>
+                                    <td className="px-6 py-4">
+                                        <Select
+                                            defaultValue={order.status}
+                                            onChange={(value) => updateOrderStatus(order._id, value)}
+                                            className={`w-full ${order.status === "Delivered" ? "bg-green-200 font-bold text-black text-center" :
+                                                order.status === "Cancelled" ? "bg-red-200 font-bold text-black text-center" : ""
+                                                }`}
+                                            disabled={order.status === "Delivered" || order.status === "Cancelled"}
+                                        >
+                                            {statusOptions.map((status, index) => (
+                                                <Option key={index} value={status}>{status}</Option>
+                                            ))}
+                                        </Select>
+                                    </td>
+                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">{order?.products.length}</td>
+                                    <td className="px-6 py-4 text-black ">
+                                        <Select
+                                            defaultValue={order.paymentStatus}
+                                            onChange={(value) => updatePaymentStatus(order._id, value)}
+                                            className={`w-full ${order.paymentStatus === "Completed" ? "bg-green-200 text-green-800 font-semibold" :
+                                                order.paymentStatus === "Pending" ? "bg-red-200 text-red-800 font-semibold" : ""
+                                                }`}
+                                            disabled={order.paymentStatus === "Completed"}
+                                        >
+                                            {paymentStatusOptions.map((status, index) => (
+                                                <Option className="text-black" key={index} value={status}>{status}</Option>
+                                            ))}
+                                        </Select>
 
-    {/* Rendering completed orders (complete === true) */}
-    {orderData
-        .filter(order => order.complete)
-        .slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage)
-        .map((curOrderData, index) => (
-            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{curOrderData.username}</td>
-                <td className="px-6 py-4">{curOrderData.phone}</td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{curOrderData.service}</td>
-                <td className="px-6 py-4">{curOrderData.provider}</td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">${curOrderData.price}</td>
-                <td className="px-6 py-4">{curOrderData.complete ? "Yes" : "No"}</td>
-                <td className="px-6 py-4">
-                    <button disabled className="font-medium text-green-600 dark:text-green-100 hover:underline cursor-not-allowed">Completed</button>
-                    <button className="font-medium text-red-600 dark:text-red-500 hover:underline ml-2" onClick={() => deleteOrder(curOrderData._id)}>Delete</button>
-                </td>
-            </tr>
-        ))}
 
-    {/* Render message if no orders */}
-    {orderData.length === 0 && (
-        <tr>
-            <td colSpan="7" className="px-6 py-4 text-center">No orders found</td>
-        </tr>
-    )}
-</tbody>
-
+                                    </td>
+                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
+                                        ₹ {order?.products.reduce((total, product) => total + (product.price * product.quantity), 0)}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <Link to={`/admin/orders/view/${order._id}`}>
+                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                                                View
+                                            </button>
+                                        </Link>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button className="font-medium text-red-600 dark:text-red-500 hover:underline ml-2" onClick={() => deleteOrder(order._id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        {orderData.length === 0 && (
+                            <tr>
+                                <td colSpan="7" className="px-6 py-4 text-center">No orders found</td>
+                            </tr>
+                        )}
+                    </tbody>
                 </table>
 
                 {/* Pagination */}
