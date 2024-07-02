@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { useAuth } from "../store/auth";
 import { toast } from 'react-toastify'; // Assuming you have imported toast for displaying notifications
 
@@ -75,9 +75,15 @@ const AdminViewOrder = () => {
                     <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-11">
                         Order Detail
                     </h2>
+                    <Link to="/admin/orders">
+                    <button
+                        className="btn btn-danger mb-10 ">
+                        Go To Orders Page
+                    </button>
+                    </Link>
                     <button
                         onClick={() => updateOrderStatus(orderData._id)}
-                        className={`btn btn-primary mb-10 ${orderData.paymentStatus === "Completed" ? "bg-green-200 text-green-800 font-semibold disabled" : ""}`}>
+                        className={`btn btn-primary mb-10 ${orderData.paymentStatus === "Completed" ? "bg-green-200 text-green-800 font-semibold disabled btn-success" : ""}`}>
                         Mark As Done
                     </button>
 
