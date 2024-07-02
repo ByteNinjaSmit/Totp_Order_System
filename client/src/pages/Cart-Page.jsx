@@ -5,9 +5,8 @@ import { Link } from "react-router-dom";
 
 export const Cart = () => {
   const { user } = useAuth();
-  const { cart, setCart } = useCart();
+  const { cart, tableNo, setCart } = useCart();
   const [quantities, setQuantities] = useState({});
-  const [tableNo, setTableNo] = useState(""); // State for table number dropdown
   const [data, setData] = useState({
     paymentMethod: "",
     tableNo: "",
@@ -73,15 +72,14 @@ export const Cart = () => {
       return updatedQuantities;
     });
   };
-
-  // Handle table number selection change
-  const handleTableNoChange = (e) => {
-    setTableNo(parseInt(e.target.value, 10)); // Convert value to integer
+  // useEffect To store TableNo in data
+  // Store tableNo in data when tableNo changes
+  useEffect(() => {
     setData((prevData) => ({
       ...prevData,
-      tableNo: parseInt(e.target.value, 10),
+      tableNo: tableNo,
     }));
-  };
+  }, [tableNo]);
 
   // Handle payment method selection
   const handlePaymentMethodChange = (e) => {
@@ -285,29 +283,16 @@ export const Cart = () => {
                 Order Summary
               </h2>
               <div className="mt-8">
-                {/* Table Number Dropdown */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="tableNo"
-                    className="font-medium text-lg leading-8 text-black"
-                  >
-                    Select Table Number:
-                  </label>
-                  <select
-                    id="tableNo"
-                    name="tableNo"
-                    className="block w-full mt-1 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    value={tableNo}
-                    onChange={handleTableNoChange}
-                  >
-                    <option value="">Select Table Number</option>
-                    {[...Array(12)].map((_, index) => (
-                      <option key={index} value={index + 1}>
-                        {index + 1}
-                      </option>
-                    ))}
-                  </select>
+                {/* Table Number Showing */}
+                <div className="flex items-center justify-between py-8">
+                  <p className="font-medium text-xl leading-8 text-black">
+                    Table No:-
+                  </p>
+                  <p className="font-semibold text-xl leading-8 text-indigo-600">
+                    {tableNo}
+                  </p>
                 </div>
+                <hr />
                 {/* Payment Methods */}
                 <div className="py-8 border-b border-gray-300">
                   <h3 className="font-medium text-xl leading-8 text-black pb-4">
@@ -339,12 +324,12 @@ export const Cart = () => {
                   </p>
                 </div>
                 <Link
-                  to={`/service/${user._id}/checkout/totp`}
+                  to={`/service/${user._id}/${tableNo}/checkout/totp`}
                   state={data}
                 >
                   <button
                     className={`w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700 ${!data.paymentMethod || !data.tableNo ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={!data.paymentMethod || !data.tableNo}
+                    disabled={!data.paymentMethod && !data.tableNo}
                   >
                     Checkout
                   </button>

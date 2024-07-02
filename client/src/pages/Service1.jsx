@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../store/auth";
 import { FaCartPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useCart } from "../store/cart";
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-
-const Service = () => {
+const Service1 = () => {
   const { services } = useAuth();
+  const { cart, addToCart, setTableNo } = useCart();
+  const params = useParams();
+  const tableNo = params.tableNo;
+
+  // Set the table number in the cart context when the component mounts
+  useEffect(() => {
+    if (tableNo) {
+      setTableNo(tableNo);
+    }
+  }, [tableNo, setTableNo]);
+
   // If services is undefined or not an array, provide a fallback
   if (!Array.isArray(services)) {
     return <div>Loading services...</div>;
@@ -35,14 +47,16 @@ const Service = () => {
                     <p className="text-indigo-600 font-semibold">${price}</p>
                   </div>
                   <hr className="border-gray-300 my-4" />
-                  <Link to="/service/QR" >
-                    <button
-                      className="flex items-center justify-center w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                      aria-label={`Add to Cart`}
-                    >
-                      <FaCartPlus className="mr-2" /> Add To Cart
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => {
+                      addToCart(curElem);
+                      toast.success("Item Added To Cart");
+                    }}
+                    className="flex items-center justify-center w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    aria-label={`Add ${name} to Cart`}
+                  >
+                    <FaCartPlus className="mr-2" /> Add To Cart
+                  </button>
                 </div>
               </div>
             );
@@ -53,4 +67,4 @@ const Service = () => {
   );
 };
 
-export default Service;
+export default Service1;

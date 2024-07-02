@@ -3,16 +3,24 @@ import { useState, useContext, createContext, useEffect } from "react";
 const CartContext = createContext();
 
 const CartProvider = ({ children }) => {
-  // Load cart from localStorage on component mount
+  // Load cart and tableNo from localStorage on component mount
   const [cart, setCart] = useState(() => {
     const existingCart = localStorage.getItem('cart');
     return existingCart ? JSON.parse(existingCart) : [];
   });
 
-  // Save cart to localStorage whenever it changes
+  const [tableNo, setTableNo] = useState(() => {
+    return localStorage.getItem('tableNo') || '';
+  });
+
+  // Save cart and tableNo to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('tableNo', tableNo);
+  }, [tableNo]);
 
   const addToCart = (newItem) => {
     setCart(prevCart => {
@@ -28,7 +36,7 @@ const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, setCart, addToCart }}>
+    <CartContext.Provider value={{ cart, setCart, addToCart, tableNo, setTableNo }}>
       {children}
     </CartContext.Provider>
   );
