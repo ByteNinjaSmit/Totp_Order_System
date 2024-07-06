@@ -57,7 +57,7 @@ cd server
 
 ## Tech Stack
 
-**Client:** React, Redux, ReactBootstrap, CSS, BootStrap V5
+**Client:** React, Redux, TailwindCss
 
 **Server:** Node Js, Express, Socket.io, Mongodb, mongoose
 
