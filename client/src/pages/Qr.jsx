@@ -4,20 +4,24 @@ import { Navigate, useNavigate } from "react-router-dom";
 import QrScanner from 'react-qr-scanner';
 
 export const Qr = () => {
-    const { user } = useAuth();
     const [scannedData, setScannedData] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
-    
+
     const handleScan = (data) => {
         if (data) {
             setScannedData(data.text);
-            navigate(data.text); // Assuming the QR code contains a valid URL
+            const url = new URL(data.text);
+            if (url) {
+                navigate(url.pathname);
+            } else {
+                setErrorMessage('Invalid QR code scanned.');
+            }
         }
     };
 
     const handleError = (err) => {
-        // console.error(err);
+        console.error(err);
         setErrorMessage('Camera access is required to scan QR codes. Please ensure your camera is connected and you have granted permissions.');
     };
 
