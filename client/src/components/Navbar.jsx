@@ -13,7 +13,7 @@ function classNames(...classes) {
 
 const Navbar1 = () => {
   const location = useLocation();
-  const { cart, setCart } = useCart(); 
+  const { cart, tableNo } = useCart();
   const { isLoggedIn, isAdmin } = useAuth();
   const [isAdminState, setIsAdminState] = useState(isAdmin);
 
@@ -24,9 +24,10 @@ const Navbar1 = () => {
   const navigation = [
     { name: 'Home', to: '/', current: location.pathname === '/' },
     { name: 'About', to: '/about', current: location.pathname === '/about' },
-    { name: 'Service', to: '/service', current: location.pathname === '/service' },
+    { name: 'Service', to: tableNo ? `/service/${tableNo}` : '/service', current: location.pathname === `/service${tableNo ? `/${tableNo}` : ''}` },
     { name: 'Contact', to: '/contact', current: location.pathname === '/contact' },
   ];
+
 
   if (isAdmin && isAdminState) {
     navigation.push({ name: 'Admin Panel', to: '/admin', current: location.pathname === '/admin' });
@@ -74,11 +75,11 @@ const Navbar1 = () => {
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-1 sm:pr-0 space-x-4">
                 {!open && (
                   <Badge count={cart?.length} className='max-sm:hidden'>
-                  <Link to="/cart" className='max-sm:hidden'>
-                    <button className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-md">
-                      <AiOutlineShoppingCart className="h-6 w-6" />
-                    </button>
-                  </Link>
+                    <Link to="/cart" className='max-sm:hidden'>
+                      <button className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-md">
+                        <AiOutlineShoppingCart className="h-6 w-6" />
+                      </button>
+                    </Link>
                   </Badge>
                 )}
                 {isLoggedIn ? (
@@ -115,11 +116,11 @@ const Navbar1 = () => {
                 </Disclosure.Button>
               ))}
               <Badge count={cart?.length}>
-              <Link to="/cart">
-                <button className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-md">
-                  <AiOutlineShoppingCart className="h-6 w-6" />
-                </button>
-              </Link>
+                <Link to="/cart">
+                  <button className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-md">
+                    <AiOutlineShoppingCart className="h-6 w-6" />
+                  </button>
+                </Link>
               </Badge>
             </div>
           </Disclosure.Panel>
