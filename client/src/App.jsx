@@ -23,6 +23,8 @@ import { Cart } from "./pages/Cart-Page";
 import Service1 from "./pages/Service1";
 import { Qr } from "./pages/Qr";
 import AdminViewOrder from "./pages/Admin-View-Order";
+import { AdminNewService } from "./pages/Admin-Serivce-Form";
+import { AdminServiceUpdate } from "./pages/Admin-Service-Update";
 
 
 const App = () => {
@@ -52,6 +54,9 @@ const App = () => {
               <Route path="totp/:id" element={<AdminTotp />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="orders/view/:id" element={<AdminViewOrder />} />
+              <Route path="services/new/form" element={<AdminNewService />} />
+              <Route path="services/:id/edit/form" element={<AdminServiceUpdate />} />
+              
             </Route>
           </Routes>
           <Footer />

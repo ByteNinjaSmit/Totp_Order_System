@@ -20,6 +20,12 @@ router.route('/orders').get(authMiddleware, adminMiddleware, adminController.get
 router.route('/orders/update/:id').patch(authMiddleware, adminMiddleware, adminController.updateOrderById);
 router.route("/orders/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deleteOrderById);
 
+// Get All Services and Post Services
+router.route("/services/data/single/:id").get(authMiddleware, adminMiddleware, adminController.getSingleServiceById);
+router.route("/services/data").post(authMiddleware, adminMiddleware, adminController.ServiceForm);
+router.route("/services/update/:id").patch(authMiddleware, adminMiddleware, adminController.updateServiceById);
+router.route("/services/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deleteServiceById);
+
 // View Order
 router.route('/orders/view/:id').get(authMiddleware, adminMiddleware, adminController.getOrderById);
 

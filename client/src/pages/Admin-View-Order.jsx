@@ -120,7 +120,7 @@ const AdminViewOrder = () => {
                             <div className="flex flex-col items-start md:flex-row md:items-center justify-between">
                                 <div>
                                     <h5 className="font-manrope font-semibold text-2xl leading-9 text-black mb-3">{product.name}</h5>
-                                    <p className="font-normal text-xl leading-8 text-gray-500">Veg : <span className="text-black font-semibold">{product.isVeg ? 'Yes' : 'No'}</span></p>
+                                    <p className="font-normal text-xl leading-8 text-gray-500">Veg : <span className="text-black font-semibold">{product.vegetarian ? 'Yes' : 'No'}</span></p>
                                     <p className="font-normal text-xl leading-8 text-gray-500">Quantity : <span className="text-black font-semibold">₹ {product.price}</span></p>
                                     <p className="font-normal text-xl leading-8 text-gray-500">Quantity : <span className="text-black font-semibold">{product.quantity}</span></p>
                                 </div>

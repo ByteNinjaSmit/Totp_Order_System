@@ -1,7 +1,7 @@
 const User = require('../models/user-model');
 const Contact = require('../models/contact-model');
 const Order = require('../models/order-model');
-const Service = require('../models/service-model');
+const Service = require("../models/service-model");
 
 // -------------------
 // Generating a ranodm Number
@@ -253,6 +253,57 @@ const getOrderById = async (req, res, next) => {
     }
 };
 
+// Get Single Services
+const getSingleServiceById =  async (req,res) => {
+    try{
+        const id = req.params.id;
+        const data = await Service.findOne({ _id: id });
+        res.status(200).json(data);
+    }catch(error){
+        console.log(`services: ${error}`);
+    }
+
+};
+
+// Update Service By Id
+const updateServiceById =  async (req,res) => {
+    try{
+        const id = req.params.id;
+        const response = await Service.findByIdAndUpdate(id, req.body, {new: true});
+        if(!response){
+            // Handle the Casse where no Document was Found
+            res.status(404).json({msg:"No Service Found."});
+            return;
+        }
+        res.status(200).json({msg: response});
+    }catch(error){
+        console.log(`services: ${error}`);
+    }
+
+};
+
+// New Service Post
+const ServiceForm=async(req,res)=>{
+    try {
+        const response=req.body
+        await Service.create(response);
+        return res.status(200).json({message:"Service Added successfully"});
+    } catch (error) {
+        return res.status(500).json({message:"Service Not Added successfully"});
+    }
+};
+
+// Delete Service By ID
+
+const deleteServiceById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await Service.deleteOne({ _id: id });
+        return res.status(200).json({ message: "Service Deleted Successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 module.exports = {
@@ -273,4 +324,8 @@ module.exports = {
     deleteOrderById,
     startContactBroadcast,
     getOrderById,
+    getSingleServiceById,
+    updateServiceById,
+    ServiceForm,
+    deleteServiceById,
 };
