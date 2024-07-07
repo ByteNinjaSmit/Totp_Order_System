@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { useAuth } from "../store/auth";
-import { Navigate, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import QrScanner from 'react-qr-scanner';
 
 export const Qr = () => {
@@ -8,13 +7,20 @@ export const Qr = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        // Check for browser support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setErrorMessage('Camera not supported in this browser. Please use a modern browser with camera support.');
+        }
+    }, []);
+
     const handleScan = (data) => {
         if (data) {
             setScannedData(data.text);
-            const url = new URL(data.text);
-            if (url) {
+            try {
+                const url = new URL(data.text);
                 navigate(url.pathname);
-            } else {
+            } catch (e) {
                 setErrorMessage('Invalid QR code scanned.');
             }
         }
@@ -26,8 +32,9 @@ export const Qr = () => {
     };
 
     const previewStyle = {
-        height: 240,
-        width: 320,
+        height: 'auto',
+        width: '100%',
+        maxWidth: '320px',
     };
 
     return (

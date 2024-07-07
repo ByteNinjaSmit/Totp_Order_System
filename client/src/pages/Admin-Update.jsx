@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export const AdminUpdate = () => {
     const navigate = useNavigate();
 
-    const { authorizationToken } = useAuth();
+    const { authorizationToken,API } = useAuth();
     const params = useParams();
     const [data, setData] = useState({
         username: "",
@@ -19,7 +19,7 @@ export const AdminUpdate = () => {
 
     const getSingleUserData = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/${params.id}`, {
+            const response = await fetch(`${API}/api/admin/users/${params.id}`, {
                 method: "GET",
                 headers: {
                     Authorization: authorizationToken,
@@ -53,7 +53,7 @@ export const AdminUpdate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/update/${params.id}`, {
+            const response = await fetch(`${API}/api/admin/users/update/${params.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

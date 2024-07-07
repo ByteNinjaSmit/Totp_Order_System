@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 export const AdminServices = () => {
-    const { authorizationToken } = useAuth();
+    const { authorizationToken, API } = useAuth();
     const [serviceData, setServiceData] = useState([]);
     const [totalServices, setTotalServices] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +16,7 @@ export const AdminServices = () => {
 
     const getServices = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/data/service", {
+            const response = await fetch(`${API}/api/data/service`, {
                 method: "GET",
             });
             if (response.ok) {
@@ -33,7 +33,7 @@ export const AdminServices = () => {
 
     const deleteService = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/services/delete/${id}`, {
+            const response = await fetch(`${API}/api/admin/services/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: authorizationToken,
@@ -62,8 +62,8 @@ export const AdminServices = () => {
 
     return (
         <>
-            <div className="bg-slate-400 pt-3 pb-2">
-                <h1 className="text-center mt-3 sm:text-5xl text-2xl lg:text-6xl mb-10 font-bold text-dark-600">
+            <div className="bg-slate-400 pt-3 pb-2 ">
+                <h1 className="w-full text-center mt-3 sm:text-5xl text-2xl lg:text-6xl mb-10 font-bold text-dark-600">
                     Admin Services Panel
                 </h1>
             </div>
@@ -74,8 +74,8 @@ export const AdminServices = () => {
                     </button>
                 </Link>
             </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg mx-4 mt-4">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="relative shadow-md sm:rounded-lg mx-4 mt-4 overflow-x-scroll">
+                <table className="w-auto text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 overflow-x-scroll">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">#</th>
@@ -85,6 +85,7 @@ export const AdminServices = () => {
                             <th scope="col" className="px-6 py-3">Ingredients</th>
                             <th scope="col" className="px-6 py-3">Category</th>
                             <th scope="col" className="px-6 py-3">Vegetarian</th>
+                            <th scope="col" className="px-6 py-3">Available</th>
                             <th scope="col" className="px-6 py-3">Price</th>
                             <th scope="col" className="px-6 py-3">Action</th>
                         </tr>
@@ -108,6 +109,7 @@ export const AdminServices = () => {
                                     </td>
                                     <td className="px-6 py-4">{service.category}</td>
                                     <td className="px-6 py-4 font-medium text-gray-900">{service.vegetarian ? "Yes" : "No"}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-900">{service.available ? "Yes" : "No"}</td>
                                     <td className="px-6 py-4">${service.price}</td>
                                     <td className="px-6 py-4">
                                         <Link to={`/admin/services/${service._id}/edit/form`}>
@@ -119,14 +121,14 @@ export const AdminServices = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="9" className="text-center py-4">
+                                <td colSpan="10" className="text-center py-4">
                                     No services available
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-                <nav className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+                <nav className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 sm:px-6">
                     <div className="flex-1 flex justify-between sm:hidden">
                         <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Previous</button>
                         <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(totalServices / servicesPerPage)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Next</button>

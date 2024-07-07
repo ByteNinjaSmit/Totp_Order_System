@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 const { Option } = Select;
 
 const AdminOrders = () => {
-    const { authorizationToken } = useAuth();
+    const { authorizationToken,API } = useAuth();
     const [orderData, setOrderData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalOrders, setTotalOrders] = useState(0);
@@ -19,7 +19,7 @@ const AdminOrders = () => {
     const ordersPerPage = 10;
 
     useEffect(() => {
-        const socket = io("http://localhost:5000", {
+        const socket = io(`${API}`, {
             auth: { token: authorizationToken },
         });
 
@@ -43,7 +43,7 @@ const AdminOrders = () => {
 
     const deleteOrder = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/orders/delete/${id}`, {
+            const response = await fetch(`${API}/api/admin/orders/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: authorizationToken,
@@ -64,7 +64,7 @@ const AdminOrders = () => {
 
     const updateOrderStatus = async (id, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
+            const response = await fetch(`${API}/api/admin/orders/update/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -91,7 +91,7 @@ const AdminOrders = () => {
 
     const updatePaymentStatus = async (id, newPaymentStatus) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
+            const response = await fetch(`${API}/api/admin/orders/update/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

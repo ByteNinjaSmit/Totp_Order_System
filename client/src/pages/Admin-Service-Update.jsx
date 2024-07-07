@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 export const AdminServiceUpdate = () => {
     const params = useParams();
     const navigate = useNavigate();
-    const { authorizationToken } = useAuth();
+    const { authorizationToken,API } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState({
         name: '',
@@ -23,7 +23,7 @@ export const AdminServiceUpdate = () => {
     useEffect(() => {
         const getSingleServiceData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/admin/services/data/single/${params.id}`, {
+                const response = await fetch(`${API}/api/admin/services/data/single/${params.id}`, {
                     method: 'GET',
                     headers: {
                         Authorization: authorizationToken,
@@ -57,7 +57,7 @@ export const AdminServiceUpdate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/services/update/${params.id}`, {
+            const response = await fetch(`${API}/api/admin/services/update/${params.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

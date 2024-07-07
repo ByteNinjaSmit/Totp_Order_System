@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { storeTokenInLS } = useAuth();
+  const { storeTokenInLS,API } = useAuth();
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -25,7 +25,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),

@@ -11,7 +11,7 @@ const defaultContactFormData = {
 
 const Contact = () => {
   const [contact, setContact] = useState(defaultContactFormData);
-  const { user } = useAuth();
+  const { user,API } = useAuth();
 
   // Automatically fill form with user data if available
   useEffect(() => {
@@ -40,7 +40,7 @@ const Contact = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/form/contact", {
+      const response = await fetch(`${API}/api/form/contact`, {
         method: "POST",
         headers: {
           'Content-Type': "application/json"

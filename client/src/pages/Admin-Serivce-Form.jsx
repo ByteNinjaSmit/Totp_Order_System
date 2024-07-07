@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 export const AdminNewService = () => {
     const navigate = useNavigate();
-    const { authorizationToken } = useAuth();
+    const { authorizationToken,API } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -29,7 +29,7 @@ export const AdminNewService = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:5000/api/admin/services/data', {
+            const response = await fetch(`${API}/api/admin/services/data`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

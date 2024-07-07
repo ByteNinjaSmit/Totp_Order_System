@@ -32,6 +32,10 @@ cd server
     
 ## Environment Variables
 
+To run this project, you will need to add the following environment variables to your .env file in the client folder
+
+`VITE_APP_URI_API`
+
 To run this project, you will need to add the following environment variables to your .env file in the server folder
 
 `MONGODB_URI`

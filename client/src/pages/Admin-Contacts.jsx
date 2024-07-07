@@ -4,14 +4,14 @@ import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 
 const AdminContacts = () => {
-    const { authorizationToken } = useAuth();
+    const { authorizationToken,API } = useAuth();
     const [contactData, setContactData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalContacts, setTotalContacts] = useState(0);
     const contactsPerPage = 10;
 
     useEffect(() => {
-        const socket = io("http://localhost:5000", {
+        const socket = io(`${API}`, {
             auth: { token: authorizationToken },
         });
 
@@ -40,7 +40,7 @@ const AdminContacts = () => {
 
     const deleteContactById = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/contacts/delete/${id}`, {
+            const response = await fetch(`${API}/api/admin/contacts/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: authorizationToken,

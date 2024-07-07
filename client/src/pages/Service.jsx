@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../store/auth";
 import { FaCartPlus } from "react-icons/fa";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const Service = () => {

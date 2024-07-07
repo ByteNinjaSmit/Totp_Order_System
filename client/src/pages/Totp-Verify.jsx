@@ -11,7 +11,7 @@ const TotpVerify = () => {
   const params = useParams();
   const inputs = useRef([]);
   const { cart, setCart } = useCart();
-  const { user, isLoggedIn, authorizationToken } = useAuth();
+  const { user, isLoggedIn, authorizationToken,API } = useAuth();
   const [failedAttempts, setFailedAttempts] = useState(0);
 
 
@@ -27,7 +27,7 @@ const TotpVerify = () => {
     setTimeout(async () => {
       try {
         console.log(fullTotpCode);
-        const response = await fetch(`http://localhost:5000/api/admin/${params.id}/orderData/totp`, {
+        const response = await fetch(`${API}/api/admin/${params.id}/orderData/totp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

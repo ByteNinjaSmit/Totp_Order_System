@@ -7,12 +7,12 @@ import "react-circular-progressbar/dist/styles.css";
 const AdminTotp = () => {
   const [totp, setTotp] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { authorizationToken } = useAuth();
+  const { authorizationToken,API } = useAuth();
   const [timer, setTimer] = useState(30);
   const [oldTotp, setOldTotp] = useState(null);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
+    const socket = io(`${API}`, {
       auth: { 
         token: authorizationToken 
       },

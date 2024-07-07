@@ -7,12 +7,12 @@ const AdminViewOrder = () => {
     const [orderData, setOrderData] = useState({});
     const [isLoading, setIsLoading] = useState(true); // Initialize isLoading state
     const params = useParams();
-    const { authorizationToken } = useAuth();
+    const { authorizationToken,API } = useAuth();
 
     // Function to fetch single order data
     const getSingleOrderData = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/orders/view/${params.id}`, {
+            const response = await fetch(`${API}/api/admin/orders/view/${params.id}`, {
                 method: "GET",
                 headers: {
                     Authorization: authorizationToken,
@@ -35,7 +35,7 @@ const AdminViewOrder = () => {
     // Function to update order status
     const updateOrderStatus = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/orders/update/${id}`, {
+            const response = await fetch(`${API}/api/admin/orders/update/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

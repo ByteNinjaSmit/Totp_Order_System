@@ -14,6 +14,9 @@ export const AuthProvider = ({ children }) => {
     return localStorage.setItem("token", serverToken);
   };
 
+  // Const API
+  const API = import.meta.env.VITE_APP_URI_API;
+
   // Logged in
   let isLoggedIn = !!token;
   console.log("isLoggedIn", isLoggedIn);
@@ -31,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:5000/api/auth/user", {
+      const response = await fetch(`${API}/api/auth/user`, {
         method: "GET",
         headers: {
           Authorization:authorizationToken ,
@@ -54,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   // To Fetch the Services Data From Backend
   const getServices = async() =>{
     try {
-      const response = await fetch("http://localhost:5000/api/data/service",{
+      const response = await fetch(`${API}/api/data/service`,{
         method:"GET",
       });
       if(response.ok){
@@ -83,7 +86,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, storeTokenInLS, LogoutUser, user, services,authorizationToken, isLoading, isAdmin,}}
+      value={{ isLoggedIn, storeTokenInLS, LogoutUser, user, services,authorizationToken, isLoading, isAdmin,API,}}
     >
       {children}
     </AuthContext.Provider>
