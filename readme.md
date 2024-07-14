@@ -67,6 +67,16 @@ cd server
 
 ![Logo](https://www.imaginarycloud.com/blog/content/images/2023/03/MERN.webp)
 
+
+## Documentation
+How work it 
+[Working Document ](https://www.scribd.com/document/750414427/Restaurant-TOTP-POS-System-in-Detail)
+
+Why this 
+[Document ](https://www.scribd.com/document/750414100/Operations-With-Innovative-POS-and-TOTP-Security-Integration)
+
+
+
 ## Features
 
 - Robust Authentication: Strengthen user authentication with TOTP.
