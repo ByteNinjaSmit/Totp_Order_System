@@ -108,7 +108,7 @@ How work it
 [Working Document ](https://www.scribd.com/document/750414427/Restaurant-TOTP-POS-System-in-Detail)
 
 Why this 
-[Document ](https://www.scribd.com/document/750414100/Operations-With-Innovative-POS-and-TOTP-Security-Integration)
+[Document ](https://www.scribd.com/document/750418156/Operations-With-Innovative-POS-and-TOTP-Security-Integration)
 
 
 
