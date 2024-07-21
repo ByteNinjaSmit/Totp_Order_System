@@ -25,6 +25,9 @@ import { Qr } from "./pages/Qr";
 import AdminViewOrder from "./pages/Admin-View-Order";
 import { AdminNewService } from "./pages/Admin-Serivce-Form";
 import { AdminServiceUpdate } from "./pages/Admin-Service-Update";
+import { AdminDashboard } from "./pages/Admin-Dashboard";
+import { AdminStaff } from "./pages/Admin-Staff";
+import AdminStaffNew  from "./pages/Admin-Staff-New";
 
 
 const App = () => {
@@ -47,7 +50,10 @@ const App = () => {
             <Route exact path="/logout" element={<Logout />} />
             <Route path="*" element={<Error />} />
             <Route path="/admin" element={<AdminLayout />}>
+              <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="staff" element={<AdminStaff />} />
+              <Route path="staff/new/form" element={<AdminStaffNew />} />
               <Route path="services" element={<AdminServices />} />
               <Route path="contacts" element={<AdminContacts />} />
               <Route path="users/:id/edit" element={<AdminUpdate />} />
@@ -56,7 +62,7 @@ const App = () => {
               <Route path="orders/view/:id" element={<AdminViewOrder />} />
               <Route path="services/new/form" element={<AdminNewService />} />
               <Route path="services/:id/edit/form" element={<AdminServiceUpdate />} />
-              
+
             </Route>
           </Routes>
           <Footer />

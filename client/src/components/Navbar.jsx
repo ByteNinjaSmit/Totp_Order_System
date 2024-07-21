@@ -30,7 +30,7 @@ const Navbar1 = () => {
 
 
   if (isAdmin && isAdminState) {
-    navigation.push({ name: 'Admin Panel', to: '/admin', current: location.pathname === '/admin' });
+    navigation.push({ name: 'Admin Panel', to: '/admin/dashboard', current: location.pathname === '/admin/dashboard' });
   }
 
   return (

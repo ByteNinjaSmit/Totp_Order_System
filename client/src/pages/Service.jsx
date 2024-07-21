@@ -1,14 +1,21 @@
 import React from "react";
 import { useAuth } from "../store/auth";
 import { FaCartPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useCart } from "../store/cart";
 
 
 const Service = () => {
   const { services } = useAuth();
+  const { tableNo } = useCart();
+
   // If services is undefined or not an array, provide a fallback
   if (!Array.isArray(services)) {
     return <div>Loading services...</div>;
+  }
+
+  if (tableNo) {
+    return <Navigate to={`/service/${tableNo}`} />;
   }
 
   return (
@@ -32,7 +39,7 @@ const Service = () => {
                     <p className="text-gray-700">{available ? 'Available' : 'Not Available'}</p>
                     <p className="text-gray-700">{vegetarian ? 'Veg' : 'Non-Veg'}</p>
                     <p className="text-gray-700">{spicy ? 'Spicy' : 'Not Spicy'}</p>
-                    <p className="text-indigo-600 font-semibold">${price}</p>
+                    <p className="text-indigo-600 font-semibold">₹ {price}</p>
                   </div>
                   <hr className="border-gray-300 my-4" />
                   <Link to="/service/QR" >

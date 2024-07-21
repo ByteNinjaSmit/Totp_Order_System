@@ -2,6 +2,7 @@ const User = require('../models/user-model');
 const Contact = require('../models/contact-model');
 const Order = require('../models/order-model');
 const Service = require("../models/service-model");
+const Staff = require("../models/staff-model");
 
 // -------------------
 // Generating a ranodm Number
@@ -305,6 +306,71 @@ const deleteServiceById = async (req, res, next) => {
     }
 };
 
+//-----------------------
+// GET ALL STAFF LOGIC 
+//--------------------------
+
+const getAllStaff = async (req, res, next) => {
+    try {
+        const staff = await Staff.find();
+        if (!staff || staff.length === 0) {
+            res.status(404).json({ message: "No staff Found" });
+        } else {
+            res.status(200).json(staff);
+        }
+    } catch (error) {
+        next(error)
+    }
+};
+
+
+//-----------------------
+// DELETE STAFF LOGIC 
+//--------------------------
+
+const deletestaffById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await Staff.deleteOne({ _id: id });
+        return res.status(200).json({ message: "Service Deleted Successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//-----------------------
+// ADD NEW POST STAFF LOGIC 
+//--------------------------
+
+
+const StaffForm = async (req, res) => {
+    try {
+        // Extract form data
+        const { name, role, mobile, countryCode } = req.body;
+        const image = req.file ? req.file.buffer.toString('base64') : ''; // Convert file buffer to base64 string or set as empty string
+        console.log(name);
+        console.log(role);
+        console.log(mobile);
+        console.log(countryCode);
+        console.log(image);
+
+        // Create new staff member
+        const newStaff = new Staff({
+            name,
+            role,
+            mobile: countryCode + mobile, // Combine country code and mobile number
+            image: image || '', // Set image as empty string if not provided
+        });
+
+        // Save staff member to database
+        await newStaff.save();
+
+        return res.status(201).json({ message: "Staff Added successfully" });
+    } catch (error) {
+        console.error('Error creating staff member:', error);
+        return res.status(500).json({ message: "Failed to add staff member" });
+    }
+};
 
 module.exports = {
     getAllUsers,
@@ -328,4 +394,7 @@ module.exports = {
     updateServiceById,
     ServiceForm,
     deleteServiceById,
+    getAllStaff,
+    deletestaffById,
+    StaffForm,
 };

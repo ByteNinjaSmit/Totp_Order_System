@@ -44,7 +44,7 @@ const Service1 = () => {
                     <p className="text-gray-700">{available ? 'Available' : 'Not Available'}</p>
                     <p className="text-gray-700">{vegetarian ? 'Veg' : 'Non-Veg'}</p>
                     <p className="text-gray-700">{spicy ? 'Spicy' : 'Not Spicy'}</p>
-                    <p className="text-indigo-600 font-semibold">${price}</p>
+                    <p className="text-indigo-600 font-semibold">₹ {price}</p>
                   </div>
                   <hr className="border-gray-300 my-4" />
                   <button

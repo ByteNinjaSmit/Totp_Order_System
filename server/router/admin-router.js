@@ -3,6 +3,14 @@ const adminController = require("../controllers/admin-controller");
 const authMiddleware = require("../middlewares/auth-middleware");
 const adminMiddleware = require("../middlewares/admin-middleware");
 const router = express.Router();
+const multer = require('multer');
+
+
+// Configure multer for file uploads
+const upload = multer({
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    storage: multer.memoryStorage() // Store files in memory
+});
 
 router.route('/users').get(authMiddleware, adminMiddleware, adminController.getAllUsers);
 router.route('/contacts').get(authMiddleware, adminMiddleware, adminController.getAllContacts);
@@ -28,5 +36,12 @@ router.route("/services/delete/:id").delete(authMiddleware, adminMiddleware, adm
 
 // View Order
 router.route('/orders/view/:id').get(authMiddleware, adminMiddleware, adminController.getOrderById);
+
+// Staff 
+router.route('/staff').get(authMiddleware, adminMiddleware, adminController.getAllStaff);
+router.route("/staff/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deletestaffById);
+router.route('/staff/data')
+    .post(authMiddleware, adminMiddleware, upload.single('image'), adminController.StaffForm);
+
 
 module.exports = router;

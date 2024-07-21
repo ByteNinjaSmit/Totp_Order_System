@@ -11,6 +11,8 @@ const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
 const adminAuthMiddleware = require('./middlewares/io-admin-middleware'); // Import io-admin middleware
 const { startTotpInterval, startOrderBroadcast,startContactBroadcast } = require("./controllers/admin-controller");
+const bodyParser = require('body-parser');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +26,8 @@ const io = new Server(server, {
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
+app.use(bodyParser.json({ limit: '10mb' })); // Example limit
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 app.use("/api/auth", authRoute);
 app.use("/api/form", contactRoute);
