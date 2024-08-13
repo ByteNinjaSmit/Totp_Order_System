@@ -14,7 +14,7 @@ function classNames(...classes) {
 const Navbar1 = () => {
   const location = useLocation();
   const { cart, tableNo } = useCart();
-  const { isLoggedIn, isAdmin } = useAuth();
+  const { isLoggedIn, isAdmin,user } = useAuth();
   const [isAdminState, setIsAdminState] = useState(isAdmin);
 
   useEffect(() => {
@@ -31,6 +31,9 @@ const Navbar1 = () => {
 
   if (isAdmin && isAdminState) {
     navigation.push({ name: 'Admin Panel', to: '/admin/dashboard', current: location.pathname === '/admin/dashboard' });
+  }
+  if (isLoggedIn && user ) {
+    navigation.push({ name: 'Dashboard', to: `${user._id}/user`, current: location.pathname === `${user._id}/user/dashboard` });
   }
 
   return (

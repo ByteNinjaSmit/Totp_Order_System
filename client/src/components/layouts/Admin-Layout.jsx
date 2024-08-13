@@ -21,9 +21,6 @@ export const AdminLayout = () => {
         );
     }
 
-    // This File path is /admin if this path then navigate to /admin/dashboard write below login
-    // logic here
-    // if location.path == /admin then navigate /admin/dashboard
     if (!user.isAdmin) {
         return <Navigate to="/" />;
     }
