@@ -122,7 +122,7 @@ export const UserOrderHistory = () => {
                     )}
                   </td>
                   <td className="px-4 py-2 text-center">
-                    <Link to={`/user/orders/view/${order._id}`}>
+                    <Link to={`/${user._id}/user/order-history/order/view/${order._id}`}>
                       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-full">
                         View
                       </button>

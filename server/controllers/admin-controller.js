@@ -133,7 +133,7 @@ const getTotp = async (req, res, next) => {
 
 const order = async (req, res) => {
     try {
-        const { totp, cart, paymentMethod, paymentStatus, tableNo } = req.body;
+        const { totp, cart, paymentMethod, paymentStatus, tableNo,amount } = req.body;
         const TOTP = totp;
         const authorizationToken = req.token;
         const id = req.params.id;
@@ -155,6 +155,7 @@ const order = async (req, res) => {
                         paymentStatus: paymentStatus,
                         tableNo: tableNo,
                         buyer: id,
+                        amount:amount,
 
                     }
                 ),
@@ -229,6 +230,37 @@ const updateOrderById = async (req, res, next) => {
     }
 };
 
+//-----------------------
+// Update Order Product Shipping Status  
+//--------------------------
+
+const updateProductStatusById = async (req, res, next) => {
+    try {
+        const { id, order: orderId } = req.params;
+        const { shippingStatus } = req.body;
+        console.log(`Order Id: ${orderId}`);
+        console.log(`Product Id: ${id}`);
+        console.log(`Shipping Status: ${shippingStatus}`);
+        
+        
+        
+
+        const updateData = await Order.findOneAndUpdate(
+            { _id: orderId, "products._id": id },
+            { $set: { "products.$.shippingStatus": shippingStatus } }
+        )
+        if(!updateData){
+            return res.status(404).json({ message: 'Order or Product not found' });
+        }
+        return res.status(200).json(updateData)
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+
 // -----------------------
 // Delete Order By Id from Database Dynamically Logic
 // -----------------------
@@ -255,42 +287,42 @@ const getOrderById = async (req, res, next) => {
 };
 
 // Get Single Services
-const getSingleServiceById =  async (req,res) => {
-    try{
+const getSingleServiceById = async (req, res) => {
+    try {
         const id = req.params.id;
         const data = await Service.findOne({ _id: id });
         res.status(200).json(data);
-    }catch(error){
+    } catch (error) {
         console.log(`services: ${error}`);
     }
 
 };
 
 // Update Service By Id
-const updateServiceById =  async (req,res) => {
-    try{
+const updateServiceById = async (req, res) => {
+    try {
         const id = req.params.id;
-        const response = await Service.findByIdAndUpdate(id, req.body, {new: true});
-        if(!response){
+        const response = await Service.findByIdAndUpdate(id, req.body, { new: true });
+        if (!response) {
             // Handle the Casse where no Document was Found
-            res.status(404).json({msg:"No Service Found."});
+            res.status(404).json({ msg: "No Service Found." });
             return;
         }
-        res.status(200).json({msg: response});
-    }catch(error){
+        res.status(200).json({ msg: response });
+    } catch (error) {
         console.log(`services: ${error}`);
     }
 
 };
 
 // New Service Post
-const ServiceForm=async(req,res)=>{
+const ServiceForm = async (req, res) => {
     try {
-        const response=req.body
+        const response = req.body
         await Service.create(response);
-        return res.status(200).json({message:"Service Added successfully"});
+        return res.status(200).json({ message: "Service Added successfully" });
     } catch (error) {
-        return res.status(500).json({message:"Service Not Added successfully"});
+        return res.status(500).json({ message: "Service Not Added successfully" });
     }
 };
 
@@ -397,4 +429,5 @@ module.exports = {
     getAllStaff,
     deletestaffById,
     StaffForm,
+    updateProductStatusById,
 };

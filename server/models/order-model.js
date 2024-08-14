@@ -30,6 +30,11 @@ const orderProductSchema = new Schema({
         type: Number,
         required: true,
     },
+    shippingStatus:{
+        type: String,
+        default: "Not Process",
+        enum: ["Not Process", "Processing", "Delivered", "Cancel"],
+    },
 });
 
 const orderSchema = new Schema(
@@ -56,6 +61,10 @@ const orderSchema = new Schema(
             default: "Not Process",
             enum: ["Not Process", "Processing", "Delivered", "Cancel"],
         },
+        amount:{
+            type: Number,
+            required: true,
+        }
     },
     { timestamps: true }
 );

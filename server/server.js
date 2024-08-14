@@ -15,17 +15,18 @@ const { startTotpInterval, startOrderBroadcast,startContactBroadcast } = require
 const bodyParser = require('body-parser');
 
 
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CORS_SERVER,
     methods: ["GET", "POST", "DELETE", "PATCH", "HEAD", "PUT"],
     credentials: true,
   },
 });
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: process.env.CORS_SERVER, credentials: true }));
 app.use(express.json());
 // app.use(bodyParser.json({ limit: '10mb' })); // Example limit
 // app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));

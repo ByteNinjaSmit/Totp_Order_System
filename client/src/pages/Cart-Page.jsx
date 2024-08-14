@@ -10,7 +10,7 @@ export const Cart = () => {
   const [data, setData] = useState({
     paymentMethod: "",
     tableNo: "",
-    paymentStatus: "",
+    paymentStatus: ""
   });
 
   // Initialize quantities from cart items
@@ -99,6 +99,7 @@ export const Cart = () => {
       cart.forEach((item) => {
         total += item.price * (quantities[item._id] || 1); // Calculate total based on quantity
       });
+      
       return total.toLocaleString("en-US", {
         style: "currency",
         currency: "INR",

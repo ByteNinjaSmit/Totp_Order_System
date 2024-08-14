@@ -26,7 +26,9 @@ router.route("/:id/orderData/totp").post(authMiddleware, adminController.order);
 // GET Order 
 router.route('/orders').get(authMiddleware, adminMiddleware, adminController.getAllOrders);
 router.route('/orders/update/:id').patch(authMiddleware, adminMiddleware, adminController.updateOrderById);
+router.route('/orders/update/:order/product/:id').patch(authMiddleware, adminMiddleware, adminController.updateProductStatusById);
 router.route("/orders/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deleteOrderById);
+
 
 // Get All Services and Post Services
 router.route("/services/data/single/:id").get(authMiddleware, adminMiddleware, adminController.getSingleServiceById);

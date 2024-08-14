@@ -31,6 +31,7 @@ import AdminStaffNew from "./pages/Admin-Staff-New";
 import { UserLayout } from "./components/layouts/User-Layout";
 import { UserDashboard } from "./pages/User-Dashboard";
 import { UserOrderHistory } from "./pages/User-Orders";
+import { UserOrderDetail } from "./pages/User-Order";
 
 const App = () => {
   return (
@@ -58,13 +59,18 @@ const App = () => {
             <Route exact path="/:id/user" element={<UserLayout />}>
               <Route
                 exact
-                path="/:id/user/dashboard"
+                path="dashboard"
                 element={<UserDashboard />}
               />
               <Route
                 exact
-                path="/:id/user/order-history"
+                path="order-history"
                 element={<UserOrderHistory />}
+              />
+              <Route
+                exact
+                path="order-history/order/view/:order"
+                element={<UserOrderDetail />}
               />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>

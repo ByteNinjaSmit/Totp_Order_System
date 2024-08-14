@@ -77,6 +77,8 @@ To run this project, you will need to add the following environment variables to
 
 `JWT_SECRET_KEY`
 
+`CORS_SERVER`
+
 
 ## Deployment Run
 

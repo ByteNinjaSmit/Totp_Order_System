@@ -4,23 +4,17 @@ import { useAuth } from "../store/auth";
 import { toast } from "react-toastify";
 import { Select } from "antd";
 
-const AdminViewOrder = () => {
-  const [orderData, setOrderData] = useState(null); // Initialize as null
+export const UserOrderDetail = () => {
+  const [orderData, setOrderData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const shipStatusOptions = [
-    { value: "Not Processed", label: "Not Processed" },
-    { value: "Processing", label: "Processing" },
-    { value: "Delivered", label: "Delivered" },
-    { value: "Cancelled", label: "Cancelled" },
-  ];
-  const params = useParams();
-  const { authorizationToken, API } = useAuth();
+  const { authorizationToken, API, user } = useAuth();
+  const { order } = useParams();
 
   // Fetch order data
   const getSingleOrderData = async () => {
     try {
       const response = await fetch(
-        `${API}/api/admin/orders/view/${params.id}`,
+        `${API}/api/user/${user._id}/user/orders/view/${order}`,
         {
           method: "GET",
           headers: {
@@ -31,120 +25,23 @@ const AdminViewOrder = () => {
       if (response.ok) {
         const data = await response.json();
         setOrderData(data);
+        setIsLoading(false); // Data fetched successfully, loading complete
       } else {
         console.error("Failed to fetch order data");
+        toast.error("Failed to fetch order data");
+        setIsLoading(false); // Error occurred, loading complete
       }
     } catch (error) {
       console.error(`Error fetching order data: ${error}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Update product shipping status
-  const updateOrderProductShipStatus = async (productId, newStatus) => {
-    console.log(`Shipping Status New: ${newStatus}`);
-    try {
-      const response = await fetch(
-        `${API}/api/admin/orders/update/${params.id}/product/${productId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authorizationToken,
-          },
-          body: JSON.stringify({ shippingStatus: newStatus }),
-        }
-      );
-      if (response.ok) {
-        toast.success("Product Status Updated Successfully");
-        await getSingleOrderData(); // Refresh data
-      } else {
-        toast.error("Failed to update Product status");
-      }
-    } catch (error) {
-      console.error("Error updating Product status:", error);
-      toast.error("Failed to update Product status");
-    }
-  };
-
-  // Check and update order status if all products are delivered
-  const checkAndUpdateOrderStatus = async () => {
-    if (!orderData || !orderData.products) {
-      console.error("Order data or products not available.");
-      return;
-    }
-
-    // console.log("Order data available:", orderData);
-
-    const deliveredProductsCount = orderData.products.filter(
-      (product) => product.shippingStatus === "Delivered"
-    ).length;
-
-    if (deliveredProductsCount === orderData.products.length) {
-      await updateOrderStatusAuto(orderData._id);
-      await getSingleOrderData(); // Refresh data
-    }
-  };
-
-  // Automatically update order status
-  const updateOrderStatusAuto = async (id) => {
-    try {
-      const response = await fetch(`${API}/api/admin/orders/update/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authorizationToken,
-        },
-        body: JSON.stringify({ status: "Delivered" }),
-      });
-      if (response.ok) {
-        // console.log("Order status updated to Delivered");
-      } else {
-        console.error("Failed to update order status");
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error);
-    }
-  };
-
-  // Manually update order status
-  const updateOrderStatus = async (id) => {
-    try {
-      const response = await fetch(`${API}/api/admin/orders/update/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authorizationToken,
-        },
-        body: JSON.stringify({
-          status: "Delivered",
-          paymentStatus: "Completed",
-        }),
-      });
-      if (response.ok) {
-        toast.success("Order Status Updated Successfully");
-        await getSingleOrderData(); // Refresh data
-      } else {
-        toast.error("Failed to update order status");
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error);
-      toast.error("Failed to update order status");
+      toast.error("Error fetching order data");
+      setIsLoading(false); // Error occurred, loading complete
     }
   };
 
   // Fetch data on component mount
   useEffect(() => {
     getSingleOrderData();
-  }, [API, authorizationToken, params.id]);
-
-  // Check order status after data is fetched
-  useEffect(() => {
-    if (orderData) {
-      checkAndUpdateOrderStatus();
-    }
-  }, [orderData]);
+  }, [API, authorizationToken, order]);
 
   // Render loading indicator while data is being fetched
   if (isLoading) {
@@ -154,7 +51,6 @@ const AdminViewOrder = () => {
   // Format date for display
   const createdAtDateTime = new Date(orderData.createdAt).toLocaleString();
 
-  // Render the order details once data is loaded
   return (
     <section className="py-24 relative">
       <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
@@ -162,19 +58,11 @@ const AdminViewOrder = () => {
           <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-11">
             Order Detail
           </h2>
-          <Link to="/admin/orders">
-            <button className="btn btn-danger mb-10 ">Go To Orders Page</button>
+          <Link to={`/${user._id}/user/order-history`}>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+              Go To Orders Page
+            </button>
           </Link>
-          <button
-            onClick={() => updateOrderStatus(orderData._id)}
-            className={`btn btn-primary mb-10 ${
-              orderData.paymentStatus === "Completed"
-                ? "bg-green-200 text-green-800 font-semibold disabled btn-success"
-                : ""
-            }`}
-          >
-            Mark As Done
-          </button>
         </div>
 
         <h6 className="font-medium text-xl leading-8 text-black mb-3">
@@ -245,7 +133,7 @@ const AdminViewOrder = () => {
                       </span>
                     </p>
                     <p className="font-normal text-xl leading-8 text-gray-500">
-                      Quantity :{" "}
+                      Price :{" "}
                       <span className="text-black font-semibold">
                         ₹ {product.price}
                       </span>
@@ -256,26 +144,22 @@ const AdminViewOrder = () => {
                         {product.quantity}
                       </span>
                     </p>
-                    <Select
-                      defaultValue={product.shippingStatus}
-                      onChange={(newStatus) =>
-                        updateOrderProductShipStatus(product._id, newStatus)
-                      }
-                      className={`w-full ${
-                        product.shippingStatus === "Cancelled"
-                          ? "bg-red-200 font-bold text-black text-center"
-                          : product.shippingStatus === "Delivered"
-                          ? "bg-green-200 font-bold text-black text-center"
-                          : product.shippingStatus === "Processing"
-                          ? "bg-yellow-200 font-bold text-black text-center rounded-lg py-1"
-                          : "bg-gray-200 font-bold text-black text-center rounded-lg py-1"
-                      }`}
-                      disabled={
-                        product.shippingStatus === "Delivered" ||
-                        product.shippingStatus === "Cancelled"
-                      }
-                      options={shipStatusOptions}
-                    />
+                    <p className="font-normal text-xl leading-8 text-gray-500">
+                      Delivery Status :{" "}
+                      <span
+                        className={`${
+                          product.shippingStatus === "Delivered"
+                            ? "text-green-500 font-semibold"
+                            : product.shippingStatus === "Cancelled"
+                            ? "text-red-600 font-semibold"
+                            : product.shippingStatus === "Processing"
+                            ? "text-yellow-400 font-semibold"
+                            : "text-black font-semibold"
+                        }`}
+                      >
+                        {product.shippingStatus}
+                      </span>
+                    </p>
                   </div>
                   <h5 className="font-manrope font-semibold text-3xl leading-10 text-black md:text-right mt-3">
                     ₹ {product.price * product.quantity}
@@ -329,15 +213,15 @@ const AdminViewOrder = () => {
 
         <div className="data">
           <h6 className="font-manrope font-bold text-2xl leading-9 text-black mb-3">
-            Thank you for Dealing with us!
+            Thank you for your trust!
           </h6>
-          <p className="font-medium text-xl leading-8 text-indigo-600">
-            Team Cyber_Byte
+          <p className="font-normal text-lg leading-8 text-gray-500">
+            Should you have any queries or require further assistance, please
+            don't hesitate to reach out to us. We're here to ensure your
+            experience is smooth and delightful. Happy dining!
           </p>
         </div>
       </div>
     </section>
   );
 };
-
-export default AdminViewOrder;

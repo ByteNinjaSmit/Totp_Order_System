@@ -179,11 +179,9 @@ const AdminOrders = () => {
                                                 <Option className="text-black" key={index} value={status}>{status}</Option>
                                             ))}
                                         </Select>
-
-
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
-                                        ₹ {order?.products.reduce((total, product) => total + (product.price * product.quantity), 0)}
+                                        ₹ {order.amount}
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link to={`/admin/orders/view/${order._id}`}>

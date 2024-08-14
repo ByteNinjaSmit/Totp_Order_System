@@ -19,6 +19,21 @@ const getOrdersByUser = async (req, res, next) => {
     }
 };
 
+// get SIngle Order Detail 
+const getSingleOrder= async (req,res,next)=>{
+    try {
+        const id = req.params.id;
+        const order = req.params.order;
+        const data = await Order.findById({_id: order}).populate("buyer","-password");
+        return res.status(200).json(data);
+    } catch (error) {
+        console.error(`User Single Order Error: ${error.message}`);
+        next(error);
+    }
+}
+
+
 module.exports = {
     getOrdersByUser,
-};
+    getSingleOrder,
+ };
