@@ -61,6 +61,14 @@ const orderSchema = new Schema(
             default: "Not Process",
             enum: ["Not Process", "Processing", "Delivered", "Cancel"],
         },
+        paymentId:{
+            type:String,
+            default:"Cash/Online Counter"
+        },
+        paymentOrderId:{
+            type:String,
+            default:"Cash/Online Counter"
+        },
         amount:{
             type: Number,
             required: true,

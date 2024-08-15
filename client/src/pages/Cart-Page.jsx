@@ -139,7 +139,7 @@ export const Cart = () => {
     const amountInPaise = Math.round(PhonePeData.amount * 100);
 
       // Prepare payment data
-      const response = await axios.post(`${API}/api/payment/razorpay/new`, {
+      const response = await axios.post(`${API}/api/payment/${user._id}/razorpay/new`, {
         username: PhonePeData.name,
         Tamount: amountInPaise,
         number: PhonePeData.number,
@@ -186,39 +186,6 @@ export const Cart = () => {
     }
   };
   
-
-
-  // const handlePayment = async (event) => {
-  //   event.preventDefault();
-
-  //   try {
-  //     const response = await fetch(`${API}/api/payment/payment/phonepe/new`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: authorizationToken,
-  //       },
-  //       body: JSON.stringify({
-  //         username: PhonePeData.name,
-  //         Tamount: PhonePeData.amount,
-  //         number: PhonePeData.number,
-  //         MUID: PhonePeData.MUID,
-  //         transactionId: PhonePeData.transactionId,
-  //         cart,
-  //         tableNo: data.tableNo,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     const responseData = await response.json();
-  //     window.location.href = responseData.data; // Adjust this based on actual response structure
-  //   } catch (error) {
-  //     console.error("Fetch request error:", error.message);
-  //   }
-  // };
 
   if (!user) {
     return (
