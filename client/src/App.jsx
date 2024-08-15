@@ -32,6 +32,7 @@ import { UserLayout } from "./components/layouts/User-Layout";
 import { UserDashboard } from "./pages/User-Dashboard";
 import { UserOrderHistory } from "./pages/User-Orders";
 import { UserOrderDetail } from "./pages/User-Order";
+import PaymentSuccess from "./pages/Payment-Success";
 
 const App = () => {
   return (
@@ -47,6 +48,7 @@ const App = () => {
             <Route exact path="/service" element={<Service />} />
             <Route exact path="/service/:tableNo" element={<Service1 />} />
             <Route exact path="/service/qr" element={<Qr />} />
+            <Route path="/paymentsuccess" element={<PaymentSuccess />} />
             <Route
               exact
               path="/service/:id/:tableNo/checkout/totp"

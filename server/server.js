@@ -8,6 +8,7 @@ const contactRoute = require("./router/contact-router");
 const serviceRoute = require("./router/service-router");
 const adminRoute = require("./router/admin-router");
 const userRoute  =require("./router/user-router");
+const payRoute  =require("./router/payment-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
 const adminAuthMiddleware = require('./middlewares/io-admin-middleware'); // Import io-admin middleware
@@ -26,8 +27,11 @@ const io = new Server(server, {
   },
 });
 
+
+
 app.use(cors({ origin: process.env.CORS_SERVER, credentials: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 // app.use(bodyParser.json({ limit: '10mb' })); // Example limit
 // app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
@@ -36,6 +40,8 @@ app.use("/api/form", contactRoute);
 app.use("/api/data", serviceRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/user",userRoute);
+app.use("/api/payment",payRoute);
+app.get('/api/payment/razorpay/getkey',(req,res)=>res.status(200).json({key:process.env.RAZORPAY_API_KEY}));
 
 app.use(errorMiddleware);
 
@@ -58,3 +64,4 @@ connectDb().then(() => {
     console.log(`Server is running at port: ${PORT}`);
   });
 });
+

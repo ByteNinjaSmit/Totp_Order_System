@@ -8,12 +8,12 @@ const authMiddleware = async (req, res, next) => {
       .status(401)
       .json({ message: "Unothorized HTTP, Token not provided" });
   }
-  console.log("Token from authmiddleware", token);
+  // console.log("Token from authmiddleware", token);
   const jwtToken = token.replace("Bearer", "").trim();
   
   try {
     const isVerified = jwt.verify(jwtToken, process.env.JWT_SECRET_KEY);
-    console.log(isVerified);
+    // console.log(isVerified);
     const userData = await User.findOne({ email: isVerified.email }).
     select({ 
       password: 0,

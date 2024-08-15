@@ -36,7 +36,7 @@ const TotpVerify = () => {
 
     setTimeout(async () => {
       try {
-        console.log(fullTotpCode);
+        // console.log(fullTotpCode);
         const response = await fetch(
           `${API}/api/admin/${params.id}/orderData/totp`,
           {

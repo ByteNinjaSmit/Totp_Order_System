@@ -2,15 +2,16 @@ import { useAuth } from "../store/auth";
 import { useCart } from "../store/cart";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export const Cart = () => {
-  const { user } = useAuth();
+  const { user, authorizationToken, API } = useAuth();
   const { cart, tableNo, setCart } = useCart();
   const [quantities, setQuantities] = useState({});
   const [data, setData] = useState({
     paymentMethod: "",
     tableNo: "",
-    paymentStatus: ""
+    paymentStatus: "",
   });
 
   // Initialize quantities from cart items
@@ -91,6 +92,14 @@ export const Cart = () => {
         selectedPaymentMethod === "Cash / Online at Counter" ? "pending" : "",
     }));
   };
+  // Function to calculate Total Price and Return Integer value
+  const calculateTotalPrice = () => {
+    let total = 0;
+    cart.forEach((item) => {
+      total += item.price * (quantities[item._id] || 1); // Calculate total based on quantity
+    });
+    return total;
+  };
 
   // Function to calculate total price
   const totalPrice = () => {
@@ -99,7 +108,7 @@ export const Cart = () => {
       cart.forEach((item) => {
         total += item.price * (quantities[item._id] || 1); // Calculate total based on quantity
       });
-      
+
       return total.toLocaleString("en-US", {
         style: "currency",
         currency: "INR",
@@ -108,6 +117,108 @@ export const Cart = () => {
       console.log(error);
     }
   };
+
+  // To Collect Data For Transfer to Payload For PhonePe Payment
+  const PhonePeData = {
+    name: user.username,
+    amount: calculateTotalPrice(),
+    number: user.phone,
+    MUID: "MUID" + Date.now(),
+    transactionId: "T" + Date.now(),
+  };  
+
+  // To Collect Data For Transfer to Payload For RazorPay Payment
+
+  const handlePayment = async () => {
+    try {
+      // Get key from Backend
+      const { data: { key } } = await axios.get(`${API}/api/payment/razorpay/getkey`);
+      console.log(`key: ${key}`);
+      
+      // Ensure the amount is a whole number in paise
+    const amountInPaise = Math.round(PhonePeData.amount * 100);
+
+      // Prepare payment data
+      const response = await axios.post(`${API}/api/payment/razorpay/new`, {
+        username: PhonePeData.name,
+        Tamount: amountInPaise,
+        number: PhonePeData.number,
+        cart,
+        tableNo: data.tableNo,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": authorizationToken,
+        }
+      });
+  
+      const paymentData = response.data;
+  
+      // Setup Razorpay options
+      const options = {
+        key: key,
+        amount: amountInPaise, // Amount in paise
+        currency: "INR",
+        name: "Hotel Order",
+        description: "Online Food Order",
+        image: "https://avatars.githubusercontent.com/u/58396188?v=4",
+        order_id: paymentData.order.id,
+        callback_url: `${API}/api/payment/razorpay/paymentVerification`,
+        prefill: {
+          name: user.username,
+          email: user.email,
+          contact: 91 + user.phone, // Ensure this is properly formatted
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#F0EB51",
+        }
+      };
+  
+      const razor = new window.Razorpay(options);
+      razor.open();
+    } catch (error) {
+      // Handle errors from axios requests or Razorpay API
+      console.error('Error in handlePayment:', error);
+      alert('An error occurred while processing your payment. Please try again.');
+    }
+  };
+  
+
+
+  // const handlePayment = async (event) => {
+  //   event.preventDefault();
+
+  //   try {
+  //     const response = await fetch(`${API}/api/payment/payment/phonepe/new`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: authorizationToken,
+  //       },
+  //       body: JSON.stringify({
+  //         username: PhonePeData.name,
+  //         Tamount: PhonePeData.amount,
+  //         number: PhonePeData.number,
+  //         MUID: PhonePeData.MUID,
+  //         transactionId: PhonePeData.transactionId,
+  //         cart,
+  //         tableNo: data.tableNo,
+  //       }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     const responseData = await response.json();
+  //     window.location.href = responseData.data; // Adjust this based on actual response structure
+  //   } catch (error) {
+  //     console.error("Fetch request error:", error.message);
+  //   }
+  // };
 
   if (!user) {
     return (
@@ -145,8 +256,7 @@ export const Cart = () => {
 
   // Function to remove duplicate items
   const uniqueCart = cart.filter(
-    (item, index, self) =>
-      index === self.findIndex((t) => t._id === item._id)
+    (item, index, self) => index === self.findIndex((t) => t._id === item._id)
   );
 
   return (
@@ -259,7 +369,6 @@ export const Cart = () => {
                             />
                           </svg>
                         </button>
-
                       </div>
                     </div>
                     <div className="flex items-center justify-center md:justify-end mt-4 md:mt-0 h-full">
@@ -315,6 +424,22 @@ export const Cart = () => {
                       Cash / Online at Counter
                     </label>
                   </div>
+                  <div className="flex items-center py-2">
+                    <input
+                      type="radio"
+                      id="Online"
+                      name="paymentMethod"
+                      value="Online"
+                      className="mr-3"
+                      onChange={handlePaymentMethodChange}
+                    />
+                    <label
+                      htmlFor="Online"
+                      className="font-medium text-lg leading-8 text-black"
+                    >
+                      UPI / QR / Online
+                    </label>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between py-8">
                   <p className="font-medium text-xl leading-8 text-black">
@@ -324,13 +449,26 @@ export const Cart = () => {
                     {totalPrice()}
                   </p>
                 </div>
+                <button
+                  onClick={handlePayment}
+                  className={`w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700 ${
+                    data.paymentMethod !== "Online" ? "hidden" : ""
+                  }`}
+                  disabled={data.paymentMethod !== "Online"}
+                >
+                  Pay Now
+                </button>
                 <Link
                   to={`/service/${user._id}/${tableNo}/checkout/totp`}
                   state={data}
                 >
                   <button
-                    className={`w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700 ${!data.paymentMethod || !data.tableNo ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={!data.paymentMethod && !data.tableNo}
+                    className={`w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700 ${
+                      data.paymentMethod !== "Cash / Online at Counter"
+                        ? "hidden"
+                        : ""
+                    }`}
+                    disabled={data.paymentMethod !== "Cash / Online at Counter"}
                   >
                     Checkout
                   </button>
