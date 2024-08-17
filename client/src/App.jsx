@@ -36,6 +36,7 @@ import PaymentSuccess from "./pages/Payment-Success";
 import PaymentSuccessExsting from "./pages/Payment-Success-Existing";
 import { ForgotPass } from "./pages/Forgot-Pass";
 import { ForgotPassNew } from "./pages/Forgot-Pass-New";
+import { UserEditProfile } from "./pages/User-Edit-profile";
 
 const App = () => {
   return (
@@ -78,6 +79,11 @@ const App = () => {
                 exact
                 path="order-history/order/view/:order"
                 element={<UserOrderDetail />}
+              />
+              <Route
+                exact
+                path="edit-profile"
+                element={<UserEditProfile />}
               />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>

@@ -92,6 +92,10 @@ const user = async (req, res) => {
   }
 };
 
+// ----------------------
+// Forgot Password Check
+// -------------------
+
 const forgotPassword = async (req, res, next) => {
   try {
     const { email, mobile } = req.body;
@@ -122,6 +126,9 @@ const forgotPassword = async (req, res, next) => {
   }
 };
 
+// -------------------
+// Reset Password confirm
+// _-------------------
 
 const resetPassword = async (req, res, next) => {
   try {

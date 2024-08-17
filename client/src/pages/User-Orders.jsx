@@ -42,11 +42,17 @@ export const UserOrderHistory = () => {
 
   return (
     <>
-      <div className="container bg-slate-400 mt-3 mb-3">
-        <h1 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-white py-3">
-          Order History
+<div className="bg-gradient-to-r from-teal-500 to-blue-500 py-8">
+    <div className="container mx-auto text-center">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
+            <span className="text-yellow-300">Order</span> <span className="text-white">History</span>
         </h1>
-      </div>
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mt-2">
+            Your complete history of <span className="text-yellow-300">orders</span> and <span className="text-yellow-300">bookings</span>.
+        </p>
+    </div>
+</div>
+
 
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-3 bg-white">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
