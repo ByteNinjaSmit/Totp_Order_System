@@ -3,12 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../store/auth";
 import { toast } from "react-toastify";
 import { Select } from "antd";
+import axios from "axios";
 
 export const UserOrderDetail = () => {
   const [orderData, setOrderData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { authorizationToken, API, user } = useAuth();
   const { order } = useParams();
+  const [TAmount, setTAmount] = useState(0);
 
   // Fetch order data
   const getSingleOrderData = async () => {
@@ -25,6 +27,8 @@ export const UserOrderDetail = () => {
       if (response.ok) {
         const data = await response.json();
         setOrderData(data);
+        setTAmount(data.amount);
+        // console.log(data.amount);
         setIsLoading(false); // Data fetched successfully, loading complete
       } else {
         console.error("Failed to fetch order data");
@@ -35,6 +39,72 @@ export const UserOrderDetail = () => {
       console.error(`Error fetching order data: ${error}`);
       toast.error("Error fetching order data");
       setIsLoading(false); // Error occurred, loading complete
+    }
+  };
+
+  // console.log(`Amount: ${TAmount}`);
+  // console.log(orderData._id);
+  const handlePayment = async () => {
+    try {
+      // Get key from Backend
+      const {
+        data: { key },
+      } = await axios.get(`${API}/api/payment/razorpay/getkey`);
+      console.log(`key: ${key}`);
+
+      // Ensure the amount is a whole number in paise
+      const amountInPaise = Math.round(TAmount * 100);
+
+      // Prepare payment data
+      const response = await axios.post(
+        `${API}/api/payment/${user._id}/razorpay/existing`,
+        {
+          // username: user.name,
+          Tamount: amountInPaise,
+          number: user.phone,
+          orderId: orderData._id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authorizationToken,
+          },
+        }
+      );
+
+      const paymentData = response.data;
+
+      // Setup Razorpay options
+      const options = {
+        key: key,
+        amount: amountInPaise, // Amount in paise
+        currency: "INR",
+        name: "Hotel Order",
+        description: "Online Food Order",
+        image: "https://avatars.githubusercontent.com/u/58396188?v=4",
+        order_id: paymentData.order.id,
+        callback_url: `${API}/api/payment/razorpay/paymentVerification/existing`,
+        prefill: {
+          name: user.username,
+          email: user.email,
+          contact: `91${user.phone}`, // Ensure this is properly formatted
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#F0EB51",
+        },
+      };
+
+      const razor = new window.Razorpay(options);
+      razor.open();
+    } catch (error) {
+      // Handle errors from axios requests or Razorpay API
+      console.error("Error in handlePayment:", error);
+      alert(
+        "An error occurred while processing your payment. Please try again."
+      );
     }
   };
 
@@ -53,16 +123,29 @@ export const UserOrderDetail = () => {
 
   return (
     <section className="py-24 relative">
-      <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
-        <div className="flex max-sm:flex-wrap justify-between">
-          <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-11">
+      <div className="w-full max-w-7xl px-4 md:px-6 mx-auto">
+        <div className="flex flex-wrap justify-between items-center">
+          <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-tight text-black mb-11">
             Order Detail
           </h2>
-          <Link to={`/${user._id}/user/order-history`}>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-              Go To Orders Page
-            </button>
-          </Link>
+          <div className="flex gap-4">
+            {/* <div>{orderData.paymentStatus}</div> */}
+            {orderData.paymentStatus !== "Completed" && (
+              <button
+                onClick={handlePayment}
+                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
+                disabled={orderData.paymentStatus === "Completed"}
+              >
+                Pay Now
+              </button>
+            )}
+
+            <Link to={`/${user._id}/user/order-history`}>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                Go To Orders Page
+              </button>
+            </Link>
+          </div>
         </div>
 
         <h6 className="font-medium text-xl leading-8 text-black mb-3">

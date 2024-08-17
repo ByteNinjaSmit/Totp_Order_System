@@ -3,7 +3,7 @@ const Contact = require('../models/contact-model');
 const Order = require('../models/order-model');
 const Service = require("../models/service-model");
 const Staff = require("../models/staff-model");
-
+const Table = require("../models/table-model");
 // -------------------
 // Generating a ranodm Number
 // =----------------------------
@@ -133,7 +133,7 @@ const getTotp = async (req, res, next) => {
 
 const order = async (req, res) => {
     try {
-        const { totp, cart, paymentMethod, paymentStatus, tableNo,amount } = req.body;
+        const { totp, cart, paymentMethod, paymentStatus, tableNo, amount } = req.body;
         const TOTP = totp;
         const authorizationToken = req.token;
         const id = req.params.id;
@@ -155,17 +155,25 @@ const order = async (req, res) => {
                         paymentStatus: paymentStatus,
                         tableNo: tableNo,
                         buyer: id,
-                        amount:amount,
+                        amount: amount,
 
                     }
                 ),
             });
+
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const responseData = await response.json();
             console.log("Order placed successfully:", responseData);
+            // Update table engagement status
+            await Table.findOneAndUpdate(
+                { tableNo: tableNo },
+                { tableEngage: true },
+                { new: true } // This option returns the updated document
+            );
+
             return res.status(200).json(responseData);
         } else {
             return res.status(400).json({ message: "Invalid TOTP" });
@@ -241,15 +249,15 @@ const updateProductStatusById = async (req, res, next) => {
         console.log(`Order Id: ${orderId}`);
         console.log(`Product Id: ${id}`);
         console.log(`Shipping Status: ${shippingStatus}`);
-        
-        
-        
+
+
+
 
         const updateData = await Order.findOneAndUpdate(
             { _id: orderId, "products._id": id },
             { $set: { "products.$.shippingStatus": shippingStatus } }
         )
-        if(!updateData){
+        if (!updateData) {
             return res.status(404).json({ message: 'Order or Product not found' });
         }
         return res.status(200).json(updateData)
@@ -404,6 +412,46 @@ const StaffForm = async (req, res) => {
     }
 };
 
+// Broadcast table
+async function startTableBroadcast(io){
+    setInterval(async()=>{
+        try {
+            const table = await Table.find({});
+            io.emit('tableData', table);
+        } catch (error) {
+            console.error('Error broadcasting tables:', error);
+        }
+    },900)
+};
+
+// Get All Table 
+const getAlltable = async (req, res) => {
+    try {
+        const tablesData = await Table.find();
+        return res.status(200).json(tablesData);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Free Active Table
+const tableFree = async (req, res) => {
+    try {
+        // Get the table number from the request parameters
+        const { table } = req.params;
+
+        // Find the table by tableNo and update the tableEngage field to false
+        const response = await Table.findOneAndUpdate(
+            { tableNo: table },
+            { tableEngage: false },
+            { new: true } // Return the updated document
+        );
+        return res.status(200).json(response);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getAllUsers,
     getAllContacts,
@@ -430,4 +478,7 @@ module.exports = {
     deletestaffById,
     StaffForm,
     updateProductStatusById,
+    getAlltable,
+    tableFree,
+    startTableBroadcast,
 };

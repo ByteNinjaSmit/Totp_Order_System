@@ -126,7 +126,6 @@ export const Cart = () => {
     MUID: "MUID" + Date.now(),
     transactionId: "T" + Date.now(),
   };  
-
   // To Collect Data For Transfer to Payload For RazorPay Payment
 
   const handlePayment = async () => {
@@ -185,6 +184,7 @@ export const Cart = () => {
       alert('An error occurred while processing your payment. Please try again.');
     }
   };
+  
   
 
   if (!user) {

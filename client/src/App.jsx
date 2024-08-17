@@ -33,6 +33,7 @@ import { UserDashboard } from "./pages/User-Dashboard";
 import { UserOrderHistory } from "./pages/User-Orders";
 import { UserOrderDetail } from "./pages/User-Order";
 import PaymentSuccess from "./pages/Payment-Success";
+import PaymentSuccessExsting from "./pages/Payment-Success-Existing";
 
 const App = () => {
   return (
@@ -50,6 +51,10 @@ const App = () => {
             <Route exact path="/service/qr" element={<Qr />} />
             <Route path="/paymentsuccess" element={<PaymentSuccess />} />
             <Route
+              path="/paymentsuccess/existing"
+              element={<PaymentSuccessExsting />}
+            />
+            <Route
               exact
               path="/service/:id/:tableNo/checkout/totp"
               element={<TotpVerify />}
@@ -59,11 +64,7 @@ const App = () => {
             <Route exact path="/logout" element={<Logout />} />
             <Route path="*" element={<Error />} />
             <Route exact path="/:id/user" element={<UserLayout />}>
-              <Route
-                exact
-                path="dashboard"
-                element={<UserDashboard />}
-              />
+              <Route exact path="dashboard" element={<UserDashboard />} />
               <Route
                 exact
                 path="order-history"

@@ -28,6 +28,7 @@
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.22.2",
     "react-toastify": "^10.0.5",
+    "react-tooltip": "^5.28.0",
     "socket.io-client": "^4.7.5",
     "ws": "^8.17.1"
   },

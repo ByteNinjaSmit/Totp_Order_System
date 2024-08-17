@@ -45,5 +45,7 @@ router.route("/staff/delete/:id").delete(authMiddleware, adminMiddleware, adminC
 router.route('/staff/data')
     .post(authMiddleware, adminMiddleware, upload.single('image'), adminController.StaffForm);
 
-
+// get All Table Info
+router.route('/table').get(authMiddleware, adminMiddleware, adminController.getAlltable,);
+router.route('/table/:table').post(authMiddleware, adminMiddleware, adminController.tableFree,);
 module.exports = router;

@@ -12,7 +12,7 @@ const payRoute  =require("./router/payment-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
 const adminAuthMiddleware = require('./middlewares/io-admin-middleware'); // Import io-admin middleware
-const { startTotpInterval, startOrderBroadcast,startContactBroadcast } = require("./controllers/admin-controller");
+const { startTotpInterval, startOrderBroadcast,startContactBroadcast,startTableBroadcast } = require("./controllers/admin-controller");
 const bodyParser = require('body-parser');
 
 
@@ -56,6 +56,9 @@ startOrderBroadcast(io);
 
 // Start Broadcasting Contacts
 startContactBroadcast(io);
+
+// Start Broadcasting Tables
+startTableBroadcast(io);
 
 const PORT = 5000;
 

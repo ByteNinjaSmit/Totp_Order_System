@@ -2,21 +2,27 @@ import React, { useEffect } from "react";
 import { useAuth } from "../store/auth";
 import { FaCartPlus } from "react-icons/fa";
 import { useCart } from "../store/cart";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const Service1 = () => {
   const { services } = useAuth();
   const { cart, addToCart, setTableNo } = useCart();
   const params = useParams();
-  const tableNo = params.tableNo;
+  const navigate = useNavigate(); // Get navigate function
+  const tableNo = parseInt(params.tableNo, 10);
 
-  // Set the table number in the cart context when the component mounts
+  // Validate tableNo and set it in the cart context when the component mounts
   useEffect(() => {
-    if (tableNo) {
-      setTableNo(tableNo);
+    if (isNaN(tableNo) || tableNo < 1 || tableNo > 20) {
+      toast.error("Please scan the QR code for an available table.");
+      setTableNo(null); // Reset tableNo
+      setTableNo(null); // Reset tableNo
+      navigate("/service"); // Redirect to the service page
+    } else {
+      setTableNo(tableNo); // Set valid tableNo
     }
-  }, [tableNo, setTableNo]);
+  }, [tableNo, setTableNo, navigate]);
 
   // If services is undefined or not an array, provide a fallback
   if (!Array.isArray(services)) {

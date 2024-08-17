@@ -7,6 +7,7 @@ import { Select } from "antd";
 const AdminViewOrder = () => {
   const [orderData, setOrderData] = useState(null); // Initialize as null
   const [isLoading, setIsLoading] = useState(true);
+  const [tableData, setTableData] = useState([]);
   const shipStatusOptions = [
     { value: "Not Processed", label: "Not Processed" },
     { value: "Processing", label: "Processing" },
@@ -133,11 +134,60 @@ const AdminViewOrder = () => {
       toast.error("Failed to update order status");
     }
   };
+  // get table Data
+  // Fetch table data
+  const getAlltableData = async () => {
+    try {
+      const response = await fetch(`${API}/api/admin/table`, {
+        method: "GET",
+        headers: {
+          Authorization: authorizationToken,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setTableData(data);
+      } else {
+        console.error("Failed to fetch table data");
+      }
+    } catch (error) {
+      console.error(`Error fetching table data: ${error}`);
+    } finally {
+    }
+  };
+
+  // Update table engage
+  const updateTableEngage = async () => {
+    try {
+      const response = await fetch(`${API}/api/admin/table/${orderData.tableNo}`, {
+        method: "POST",
+        headers: {
+          Authorization: authorizationToken,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        toast.success("Successfully updated Table.");
+        getAlltableData(); // Re-fetch table data to update the status
+      } else {
+        console.error("Failed to Free  table data");
+      }
+    } catch (error) {
+      console.error(`Error Free table data: ${error}`);
+    } finally {
+    }
+  };
+  // Check if the order's table is engaged
+  const isTableEngaged = () => {
+    const table = tableData.find((t) => t.tableNo === orderData.tableNo);
+    return table ? table.tableEngage : false;
+  };
 
   // Fetch data on component mount
   useEffect(() => {
+    getAlltableData();
     getSingleOrderData();
-  }, [API, authorizationToken, params.id]);
+  }, [API, authorizationToken]);
 
   // Check order status after data is fetched
   useEffect(() => {
@@ -163,8 +213,18 @@ const AdminViewOrder = () => {
             Order Detail
           </h2>
           <Link to="/admin/orders">
-            <button className="btn btn-danger mb-10 ">Go To Orders Page</button>
+            <button className="btn btn-primary mb-10 ">
+              Go To Orders Page
+            </button>
           </Link>
+          {isTableEngaged() && (
+            <button
+              className="btn btn-danger mb-10"
+              onClick={updateTableEngage}
+            >
+              Free Table
+            </button>
+          )}
           <button
             onClick={() => updateOrderStatus(orderData._id)}
             className={`btn btn-primary mb-10 ${
