@@ -7,6 +7,8 @@ require("dotenv").config();
 const axios = require("axios");
 const crypto = require("crypto");
 const Table = require("../models/table-model");
+require("dotenv").config();
+
 
 // Instance OF razorPay
 const instance = new Razorpay({
@@ -109,7 +111,7 @@ const paymentVerification = async (req, res) => {
     );
 
     res.redirect(
-      `http://localhost:5173/paymentsuccess?reference=${razorpay_payment_id}`
+      `${process.env.CORS_SERVER}/paymentsuccess?reference=${razorpay_payment_id}`
     );
   } else {
     res.status(400).json({
@@ -199,7 +201,7 @@ const paymentVerificationExisting = async (req, res) => {
     );
 
     res.redirect(
-      `http://localhost:5173/paymentsuccess/existing?reference=${razorpay_payment_id}&orderId=${globalOrderId}`
+      `${process.env.CORS_SERVER}/paymentsuccess/existing?reference=${razorpay_payment_id}&orderId=${globalOrderId}`
     );
   } else {
     res.status(400).json({

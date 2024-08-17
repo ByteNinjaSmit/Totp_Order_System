@@ -79,6 +79,10 @@ To run this project, you will need to add the following environment variables to
 
 `CORS_SERVER`
 
+`RAZORPAY_API_KEY`
+
+`RAZORPAY_API_SECRET`
+
 
 ## Deployment Run
 

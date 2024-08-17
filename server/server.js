@@ -32,8 +32,6 @@ const io = new Server(server, {
 app.use(cors({ origin: process.env.CORS_SERVER, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
-// app.use(bodyParser.json({ limit: '10mb' })); // Example limit
-// app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 app.use("/api/auth", authRoute);
 app.use("/api/form", contactRoute);

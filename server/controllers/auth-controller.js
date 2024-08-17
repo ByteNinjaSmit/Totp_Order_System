@@ -1,3 +1,4 @@
+require("dotenv").config();
 const User = require("../models/user-model");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
@@ -114,7 +115,7 @@ const forgotPassword = async (req, res, next) => {
 
     await resetToken.save();
 
-    const resetLink = `http://localhost:5173/forgotsuccess?_id=${user._id}&token=${token}`;
+    const resetLink = `${process.env.CORS_SERVER}/forgotsuccess?_id=${user._id}&token=${token}`;
     return res.status(200).json({ redirectUrl: resetLink }); // Update to match frontend
   } catch (error) {
     next(error);
