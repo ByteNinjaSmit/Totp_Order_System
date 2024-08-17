@@ -246,12 +246,6 @@ const updateProductStatusById = async (req, res, next) => {
     try {
         const { id, order: orderId } = req.params;
         const { shippingStatus } = req.body;
-        console.log(`Order Id: ${orderId}`);
-        console.log(`Product Id: ${id}`);
-        console.log(`Shipping Status: ${shippingStatus}`);
-
-
-
 
         const updateData = await Order.findOneAndUpdate(
             { _id: orderId, "products._id": id },

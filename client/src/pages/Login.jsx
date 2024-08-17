@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate,Link } from "react-router-dom";
 import { useAuth } from "../store/auth";
 import { toast } from 'react-toastify';
 
@@ -117,9 +117,9 @@ const Login = () => {
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+              <Link to={"/forgot"} className="font-semibold text-indigo-600 hover:text-indigo-500">
                 Forgot password?
-              </a>
+              </Link>
             </div>
           </div>
 

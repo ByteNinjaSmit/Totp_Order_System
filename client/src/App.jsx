@@ -34,6 +34,8 @@ import { UserOrderHistory } from "./pages/User-Orders";
 import { UserOrderDetail } from "./pages/User-Order";
 import PaymentSuccess from "./pages/Payment-Success";
 import PaymentSuccessExsting from "./pages/Payment-Success-Existing";
+import { ForgotPass } from "./pages/Forgot-Pass";
+import { ForgotPassNew } from "./pages/Forgot-Pass-New";
 
 const App = () => {
   return (
@@ -46,6 +48,8 @@ const App = () => {
             <Route exact path="/about" element={<About />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/register" element={<Register />} />
+            <Route exact path="/forgot" element={<ForgotPass />} />
+            <Route exact path="/forgotsuccess" element={<ForgotPassNew />} />
             <Route exact path="/service" element={<Service />} />
             <Route exact path="/service/:tableNo" element={<Service1 />} />
             <Route exact path="/service/qr" element={<Qr />} />
