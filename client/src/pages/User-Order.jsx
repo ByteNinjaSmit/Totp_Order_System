@@ -269,7 +269,7 @@ export const UserOrderDetail = () => {
                       (total, product) =>
                         total + product.price * product.quantity,
                       0
-                    )}
+                    ).toFixed(2)}
                   </p>
                 </div>
                 <div className="flex justify-between mb-2">
@@ -286,7 +286,7 @@ export const UserOrderDetail = () => {
                       (total, product) =>
                         total + product.price * product.quantity,
                       0
-                    )}
+                    ).toFixed(2)}
                   </p>
                 </div>
               </div>

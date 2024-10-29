@@ -37,6 +37,8 @@ import PaymentSuccessExsting from "./pages/Payment-Success-Existing";
 import { ForgotPass } from "./pages/Forgot-Pass";
 import { ForgotPassNew } from "./pages/Forgot-Pass-New";
 import { UserEditProfile } from "./pages/User-Edit-profile";
+import OrderMenu from "./pages/Menu-Service";
+import PublicOrderMenu from "./pages/Simple-Menu-Service";
 
 const App = () => {
   return (
@@ -51,8 +53,10 @@ const App = () => {
             <Route exact path="/register" element={<Register />} />
             <Route exact path="/forgot" element={<ForgotPass />} />
             <Route exact path="/forgotsuccess" element={<ForgotPassNew />} />
-            <Route exact path="/service" element={<Service />} />
-            <Route exact path="/service/:tableNo" element={<Service1 />} />
+            {/* <Route exact path="/service" element={<Service />} /> */}
+            {/* <Route exact path="/service/:tableNo" element={<Service1 />} /> */}
+            <Route exact path="/service" element={<PublicOrderMenu />} />
+            <Route exact path="/service/:tableNo" element={<OrderMenu />} />
             <Route exact path="/service/qr" element={<Qr />} />
             <Route path="/paymentsuccess" element={<PaymentSuccess />} />
             <Route

@@ -42,16 +42,16 @@ export const UserOrderHistory = () => {
 
   return (
     <>
-<div className="bg-gradient-to-r from-teal-500 to-blue-500 py-8">
-    <div className="container mx-auto text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
+      <div className="bg-gradient-to-r from-teal-500 to-blue-500 py-8">
+        <div className="container mx-auto text-center">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
             <span className="text-yellow-300">Order</span> <span className="text-white">History</span>
-        </h1>
-        <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mt-2">
+          </h1>
+          <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mt-2">
             Your complete history of <span className="text-yellow-300">orders</span> and <span className="text-yellow-300">bookings</span>.
-        </p>
-    </div>
-</div>
+          </p>
+        </div>
+      </div>
 
 
       <div className="overflow-x-auto shadow-md sm:rounded-lg mt-3 bg-white">
@@ -92,15 +92,14 @@ export const UserOrderHistory = () => {
                   </td>
                   <td className="px-4 py-2 text-center">
                     <div
-                      className={`${
-                        order.status === "Delivered"
+                      className={`${order.status === "Delivered"
                           ? "bg-green-200 font-bold text-black text-center rounded-lg py-1"
                           : order.status === "Cancelled"
-                          ? "bg-red-200 font-bold text-black text-center rounded-lg py-1"
-                          : order.status === "Processing"
-                          ? "bg-yellow-200 font-bold text-black text-center rounded-lg py-1"
-                          : "bg-gray-200 font-bold text-black text-center rounded-lg py-1"
-                      }`}
+                            ? "bg-red-200 font-bold text-black text-center rounded-lg py-1"
+                            : order.status === "Processing"
+                              ? "bg-yellow-200 font-bold text-black text-center rounded-lg py-1"
+                              : "bg-gray-200 font-bold text-black text-center rounded-lg py-1"
+                        }`}
                     >
                       {order.status}
                     </div>
@@ -110,22 +109,20 @@ export const UserOrderHistory = () => {
                   </td>
                   <td className="px-4 py-2 text-center">
                     <div
-                      className={`${
-                        order.paymentStatus === "Completed"
+                      className={`${order.paymentStatus === "Completed"
                           ? "bg-green-200 font-bold text-black text-center rounded-lg py-1"
                           : "bg-red-200 font-bold text-black text-center rounded-lg py-1"
-                      }`}
+                        }`}
                     >
                       {order.paymentStatus}
                     </div>
                   </td>
                   <td className="px-4 py-2 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ₹{" "}
-                    {order?.products.reduce(
-                      (total, product) =>
-                        total + product.price * product.quantity,
-                      0
-                    )}
+                    {order?.products
+                      .reduce((total, product) => total + product.price * product.quantity, 0)
+                      .toFixed(2)}
+
                   </td>
                   <td className="px-4 py-2 text-center">
                     <Link to={`/${user._id}/user/order-history/order/view/${order._id}`}>
@@ -195,11 +192,10 @@ export const UserOrderHistory = () => {
                     <button
                       key={number + 1}
                       onClick={() => handlePageChange(number + 1)}
-                      className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
-                        currentPage === number + 1
+                      className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === number + 1
                           ? "text-blue-600 bg-blue-50 border-blue-500 dark:bg-blue-600 dark:border-blue-600 dark:text-white"
                           : "text-gray-700 bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      }`}
+                        }`}
                     >
                       {number + 1}
                     </button>
