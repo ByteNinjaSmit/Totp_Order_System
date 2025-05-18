@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        // console.log("User Data: ",data.userData);
+
         setUser(data.userData);
         setIsAdmin(data.userData.isAdmin);
         setIsLoading(false);
